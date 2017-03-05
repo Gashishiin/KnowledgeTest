@@ -5,4 +5,6 @@ import org.slf4j.LoggerFactory;
 
 public class UserApp {
     private static final Logger LOG = LoggerFactory.getLogger(UserApp.class);
+
+
 }
