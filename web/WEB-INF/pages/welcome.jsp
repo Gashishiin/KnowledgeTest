@@ -11,6 +11,6 @@
     <title>Welcome</title>
 </head>
 <body>
-<a href="/users">Show all users</a>
+<a href="${pageContext.request.contextPath}/users">Show all users</a>
 </body>
 </html>

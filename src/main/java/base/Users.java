@@ -8,11 +8,11 @@ public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String login;
-    @Column
+    @Column(nullable = false)
     private String password;
-    @Column
+    @Column (nullable = false)
     private String fullname;
 
     public Users(){}
@@ -53,5 +53,12 @@ public class Users {
 
     public void setFullname(String fullname) {
         this.fullname = fullname;
+    }
+
+    @Override
+    public String toString() {
+        return "id = " + id +
+                "\t login = " + login +
+                "\t fullname = " + fullname ;
     }
 }
