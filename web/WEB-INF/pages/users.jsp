@@ -28,6 +28,6 @@
         <input type="submit" value="Delete users">
     </div>
 </form>
-<a href="${pageContext.request.contextPath}">Go home</a>
+<a href="${pageContext.request.contextPath}/">Go home</a>
 </body>
 </html>
