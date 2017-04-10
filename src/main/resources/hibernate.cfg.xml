@@ -13,6 +13,7 @@
         <mapping class="base.Users"/>
         <mapping class="base.Discipline"/>
         <mapping class="base.Question"/>
+        <mapping class="base.Answer"/>
 
     </session-factory>
 </hibernate-configuration>

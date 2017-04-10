@@ -39,4 +39,20 @@ public class DisciplineDAO extends HibernateUtil {
             throw new HibernateException(e);
         }
     }
+
+    public Discipline retrieveDiscipline(long disciplineID){
+        try{
+            begin();
+            Query query = getSession().createQuery("from Discipline where disciplineID = :disciplineID");
+            query.setParameter("disciplineID",disciplineID);
+            Discipline discipline = (Discipline)query.uniqueResult();
+            commit();
+            return discipline;
+        }catch (HibernateException e){
+            rollback();
+            LOG.error("Cannot retrieve disciplineID " + disciplineID);
+            throw new HibernateException(e);
+        }
+
+    }
 }
