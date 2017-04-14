@@ -42,6 +42,10 @@ public class Question {
     @Column
     private String questionText;
 
+    protected QuestionType questionType;
+
+
+
     public long getQuestionID() {
         return questionID;
     }

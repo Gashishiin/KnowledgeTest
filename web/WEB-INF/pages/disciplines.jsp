@@ -18,6 +18,6 @@
     </c:forEach>
     <input type="submit" value="Delete disciplines">
 </div>
-
+<a href="${pageContext.request.contextPath}/">Go home</a>
 </body>
 </html>
