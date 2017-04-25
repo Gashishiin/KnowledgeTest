@@ -42,9 +42,8 @@ public class Question {
     @Column
     private String questionText;
 
-    protected QuestionType questionType;
-
-
+    @Enumerated(EnumType.ORDINAL)
+    private QuestionType questionType;
 
     public long getQuestionID() {
         return questionID;
