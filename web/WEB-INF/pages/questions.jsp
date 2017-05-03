@@ -4,32 +4,60 @@
 <html>
 <head>
     <title>Questions</title>
+    <script src="/resources/jquery/jquery-3.2.1.js"></script>
+    <script src="/resources/jsTree/jstree.js"></script>
+    <link rel="stylesheet" href="/resources/jsTree/themes/default/style.css"/>
 
+    <script>
+        var Nodes = {};
+        $(document).ready(function () {
+            $("#discipline_tree").on('changed.jstree', function (e, data) {
+                var i, j, r = [];
+                for (i = 0, j = data.selected.length; i < j; i++) {
+                    r.push(data.instance.get_node(data.selected[i]).id);
+                    Nodes.id = r[0];
+                }
+                $.ajax({
+                        type: "POST",
+                        url: "/question_list",
+                        data: "disciplineID=" + Nodes.id,
+                        success: function (data) {
+
+                        }
+                    }
+                );
+
+            })
+                .jstree({
+                    'core': {
+                        'data': [
+                            {"id": "0", "parent": "#", "text": "Top"},
+                            <c:forEach items="${disciplines}" var="disciplines">
+                            {
+                                "id": "${disciplines.disciplineID}",
+                                "parent": "${disciplines.parentDisciplineID}",
+                                "text": "${disciplines.disciplineName}"
+                            },
+                            </c:forEach>
+                        ]
+                    }
+                });
+            $("#discipline_tree").on("ready.jstree", function () {
+                $("#discipline_tree").jstree("open_all");
+            });
+
+        });
+
+
+    </script>
 </head>
 <body>
-<form action="choose_discipline" method="POST">
-    <c:forEach items="${disciplines}" var="disciplines">
-        <input type="radio" name="discipline_name" value="${disciplines.disciplineID}">
-        <c:out value="${disciplines.disciplineName}"/><br/>
+<div id="discipline_tree">
+</div>
+<div id="event_result">
+    Result
+</div>
 
-    </c:forEach>
-</form>
-<script src="/webjars/jquery/3.1.1/jquery.js"/>
-<script src="/webjars/jstree/3.3.3/jstree.js"/>
-<script>
-    $(function () {
-        $('#using_json_2').jstree({
-            'core': {
-                'data': [
-                    {"id": "ajson1", "parent": "#", "text": "Simple root node"},
-                    {"id": "ajson2", "parent": "#", "text": "Root node 2"},
-                    {"id": "ajson3", "parent": "ajson2", "text": "Child 1"},
-                    {"id": "ajson4", "parent": "ajson2", "text": "Child 2"},
-                ]
-            }
-        });
-    });
-</script>
 
 <a href="${pageContext.request.contextPath}/">Go home</a>
 </body>

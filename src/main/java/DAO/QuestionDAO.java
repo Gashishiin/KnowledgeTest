@@ -7,6 +7,9 @@ import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class QuestionDAO extends HibernateUtil {
     private static final Logger LOG = LoggerFactory.getLogger(QuestionDAO.class);
@@ -36,10 +39,24 @@ public class QuestionDAO extends HibernateUtil {
             return question;
         }catch (HibernateException e){
             rollback();
-            LOG.error("Cannot retrive questionID " + questionID);
+            LOG.error("Cannot retrieve questionID " + questionID);
             throw new HibernateException(e);
         }
     }
 
-
+    public List<Question> retrieveQuestionByDiscipline(long disciplineID){
+        List<Question> questionList = new ArrayList<Question>();
+        try{
+            begin();
+            Query query = getSession().createQuery("from Question where discipline.disciplineID = :disciplineID");
+            query.setParameter("disciplineID",disciplineID);
+            questionList = query.getResultList();
+            commit();
+            return questionList;
+        }catch (HibernateException e){
+            rollback();
+            LOG.error("Cannot retieve questions by discipline " + disciplineID);
+            throw new HibernateException(e);
+        }
+    }
 }
