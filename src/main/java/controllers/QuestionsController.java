@@ -2,6 +2,7 @@ package controllers;
 
 import DAO.DisciplineDAO;
 import DAO.QuestionDAO;
+import base.Answer;
 import base.Discipline;
 import base.Question;
 import org.springframework.stereotype.Controller;
@@ -29,13 +30,26 @@ public class QuestionsController {
 
     @RequestMapping("/question_list")
     @ResponseBody
-    public List<Question> getQuestionList(WebRequest request, Model model){
+    public String getQuestionList(WebRequest request, Model model){
+        String questionsWithAnswers="";
         String discipline = request.getParameter("disciplineID");
-        System.out.println("Discipline " + discipline);
         long disciplineID = Long.parseLong(discipline);
         List<Question> questionList = new ArrayList<Question>();
         questionList = new QuestionDAO().retrieveQuestionByDiscipline(disciplineID);
-        return questionList;
+        List<Answer> answerList;
+        for (Question q :
+                questionList) {
+            questionsWithAnswers+=q.getQuestionText()+"\n";
+            answerList = new QuestionDAO().retrieveAnswers(q.getQuestionID());
+            for (Answer a :
+                    answerList) {
+                questionsWithAnswers+=(a.isCorrect()
+                        ? "<li style=\"list-style: disc\">"
+                        : "<li style=\"list-style: circle\">")
+                        + a.getAnswerText()+"</li>\n";
+            }
+        }
+        return questionsWithAnswers;
     }
 
 

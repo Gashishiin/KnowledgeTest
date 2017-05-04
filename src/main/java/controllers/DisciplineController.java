@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ import java.util.List;
 public class DisciplineController {
 
     @RequestMapping(value = "/creatediscipline", method = RequestMethod.POST)
+    @ResponseBody
     public String createDiscipline(WebRequest request, Model model) {
         String disciplineName = request.getParameter("disciplineName");
         String parentDiscipline = request.getParameter("parentDisciplineID");
@@ -25,13 +28,9 @@ public class DisciplineController {
         } else{
             parentDisciplineID = Long.parseLong(parentDiscipline);
         }
-        try{
+
             new DisciplineDAO().createDiscipline(disciplineName,parentDisciplineID);
-        }catch(HibernateException e){
-
-        }
-
-        return "redirect:/disciplines";
+        return "Created discipline " + disciplineName;
     }
 
 
@@ -46,4 +45,14 @@ public class DisciplineController {
         model.addAttribute("disciplinelist", disciplineList);
         return ("/disciplines");
     }
+
+    @RequestMapping(value = "/deletediscipline")
+    @ResponseBody
+    public String deleteDiscipline(@RequestParam(value = "disciplineID") long disciplineID){
+        String disciplineName = new DisciplineDAO().retrieveDiscipline(disciplineID).getDisciplineName();
+        System.out.println("Deleting discipline " + disciplineName);
+        new DisciplineDAO().deleteDiscipline(disciplineID);
+        return disciplineName;
+    }
+
 }

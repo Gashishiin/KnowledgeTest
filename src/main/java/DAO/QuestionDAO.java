@@ -1,5 +1,6 @@
 package DAO;
 
+import base.Answer;
 import base.Discipline;
 import base.Question;
 import org.hibernate.HibernateException;
@@ -56,6 +57,21 @@ public class QuestionDAO extends HibernateUtil {
         }catch (HibernateException e){
             rollback();
             LOG.error("Cannot retieve questions by discipline " + disciplineID);
+            throw new HibernateException(e);
+        }
+    }
+
+    public List<Answer> retrieveAnswers(long questionID){
+        try{
+            begin();
+            Query query = getSession().createQuery("from Answer  where question.questionID = :questionID");
+            query.setParameter("questionID",questionID);
+            List<Answer> answerList = query.getResultList();
+            commit();
+            return answerList;
+        }catch (HibernateException e){
+            rollback();
+            LOG.error("Cannot retrieve answers of question " + questionID) ;
             throw new HibernateException(e);
         }
     }

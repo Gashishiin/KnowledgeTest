@@ -6,6 +6,7 @@ import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DisciplineDAO extends HibernateUtil {
@@ -55,4 +56,24 @@ public class DisciplineDAO extends HibernateUtil {
         }
 
     }
+
+    public String deleteDiscipline(long disciplineID){
+        try{
+            Discipline discipline = retrieveDiscipline(disciplineID);
+            begin();
+            getSession().delete(discipline);
+            commit();
+            System.out.println("DAO deleting discipline " + discipline.getDisciplineName());
+            return discipline.getDisciplineName();
+        }catch (HibernateException e){
+            rollback();
+            LOG.error("Cannot delete discipline " + disciplineID);
+            throw new HibernateException(e);
+        }
+    }
+
+
+
+
+
 }

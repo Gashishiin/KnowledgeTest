@@ -13,8 +13,7 @@ public class Discipline {
     private String disciplineName;
     @Column
     private long parentDisciplineID;
-    @Column
-    private int level;
+
     @OneToMany(mappedBy = "discipline",cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
     private Set<Question> questionSet = new HashSet<Question>();
 
@@ -50,11 +49,4 @@ public class Discipline {
         this.parentDisciplineID = parentDisciplineID;
     }
 
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
 }
