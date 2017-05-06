@@ -32,7 +32,7 @@
                 .jstree({
                     'core': {
                         'data': [
-                            {"id": "0", "parent": "#", "text": "Top","state":{"selected":"true"}},
+                            {"id": "0", "parent": "#", "text": "Top", "state": {"selected": "true"}},
                             <c:forEach items="${disciplines}" var="disciplines">
                             {
                                 "id": "${disciplines.disciplineID}",
@@ -54,66 +54,85 @@
 <div id="header">
     <a href="${pageContext.request.contextPath}/">Go home</a>
 </div>
-<div id="wrap">
-    <div id="buttons">
-        <button onclick="createDiscipline()">New Discipline</button>
-        <button onclick="deleteDiscipline()">Delete Discipline</button>
-        <button onclick="createQuestion()">Create Question</button>
-        <button onclick="deleteQuestion()">Delete Question</button>
-        <script>
-            function createDiscipline() {
-                var disciplineName = prompt("Enter discipline name");
-                if (disciplineName != null && disciplineName != ""){
-                    $.post("/creatediscipline",
-                        {
-                            disciplineName:disciplineName,
-                            parentDisciplineID:DTree.id,
-                        },
-                        function () {
+<div id="buttons">
+    <button onclick="createDiscipline()">New Discipline</button>
+    <button onclick="deleteDiscipline()">Delete Discipline</button>
+    <button onclick="deleteQuestion()">Delete Question</button>
+    <script>
+        function createDiscipline() {
+            var disciplineName = prompt("Enter discipline name");
+            if (disciplineName != null && disciplineName != "") {
+                $.post("/creatediscipline",
+                    {
+                        disciplineName: disciplineName,
+                        parentDisciplineID: DTree.id,
+                    },
+                    function () {
                         DTree.tree.jstree("refresh");
-                        }
-                    )
-                }
+                    }
+                )
             }
-            function deleteDiscipline() {
-                if (window.confirm("Are sure to delete discipline " + DTree.name + "?")) {
-                    $.post("/deletedisciplinearray",
-                        {
-                            disciplineArray: DTree.array,
-                        },function () {}
-                    )
-                }
+        }
+        function deleteDiscipline() {
+            if (window.confirm("Are sure to delete discipline " + DTree.name + "?")) {
+                $.post("/deletedisciplinearray",
+                    {
+                        disciplineArray: DTree.array
+                    }
+                )
             }
+        }
 
-            function createQuestion() {
+        function createQuestion() {
+            var str = $('#answerbox input:not([type="checkbox"])').serialize();
+            var str1 = $("#answerbox input[type='checkbox']").map(function () {
+                return this.name + "=" + this.checked;
+            }).get().join("&");
+            if (str1 != "" && str != "") str += "&" + str1;
+            else str += str1;
+            str += "&disciplineid=" + DTree.id;
+            $.ajax({
+                type: "POST",
+                url: "/createquestion",
+                data: str
+            })
+        }
 
-            }
-            
-            function deleteQuestion() {
+        function deleteQuestion() {
 
-            }
-            function addAnswer() {
-                var line='<div id="answer"><input type="checkbox" name="answer">' +
-                        '<input type="text" name="answertext" id="">' +
-                    '<a href="#" onclick="deleteAnswer()">Remove</a></div>';
-                document.getElementById("input_fields_wrap").innerHTML+=line;
-            }
-            function deleteAnswer() {
-                    console.log("Remove div " + this.text);
-                    $(this).parent('div').remove();
-            }
-        </script>
-    </div>
+        }
+        function addAnswer() {
+            var line = '<div id="answer">' +
+                '<input type="text" name="answertext[]">' +
+                '<input type="checkbox" name="checkanswer[]">' +
+                '<a href="#" onclick="deleteAnswer()">Remove</a></div>';
+            document.getElementById("input_fields_wrap").innerHTML += line;
+        }
+        function deleteAnswer() {
+            console.log("Remove div " + this.text);
+            $(this).parent('div').remove();
+        }
+    </script>
+</div>
+
+<div id="wrap">
     <div id="discipline_tree" style="float: left; width: 200px"></div>
-    <div id="question_list" style="float: left"></div>
-    <div id="input_fields_wrap">
-        <div><input type="text" name="questionText"></div>
-        <button onclick="addAnswer()">Add Answer</button>
-        <div id="answer">
-            <input type="checkbox" name="answer">
-            <input type="text" name="answertext">
-        </div>
+    <div id="right-panel" style="margin-left: 220px;">
+        <form action="#" method="post" onsubmit="createQuestion();return false" id="answerbox">
+            <div id="input_fields_wrap">
+                Input Question:<br/>
+                <textarea type="text" name="questiontext" id="questiontext" cols="40" rows="3"></textarea>
+                <br/>
+                <button onclick="addAnswer()">Add Answer</button>
+                <div id="answer"><input type="text" name="answertext[]"><input type="checkbox" name="checkanswer[]">
+                </div>
+
+            </div>
+            <input type="submit" value="Create question">
+        </form>
+        <div id="question_list"></div>
     </div>
+
 </div>
 </body>
 </html>

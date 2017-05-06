@@ -28,6 +28,10 @@ public class Question {
         this.questionText = questionText;
     }
 
+    public void setQuestionType(QuestionType questionType) {
+        this.questionType = questionType;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long questionID;

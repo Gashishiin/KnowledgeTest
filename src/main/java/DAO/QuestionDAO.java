@@ -3,6 +3,7 @@ package DAO;
 import base.Answer;
 import base.Discipline;
 import base.Question;
+import base.QuestionType;
 import org.hibernate.HibernateException;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
@@ -15,16 +16,35 @@ import java.util.List;
 public class QuestionDAO extends HibernateUtil {
     private static final Logger LOG = LoggerFactory.getLogger(QuestionDAO.class);
 
-    public Question createQuestion(long disciplineID, String questionText){
+    public Question createQuestion(long disciplineID, String questionText, String[] answerTexts, String[] checks){
         try{
-            begin();
             Discipline discipline = new DisciplineDAO().retrieveDiscipline(disciplineID);
+            begin();
             Question question = new Question(discipline,questionText);
+            Answer answer;
+            int correctAnswer = 0;
+            boolean isCorrect;
+            for (int i = 0; i < answerTexts.length; i++) {
+                isCorrect = Boolean.valueOf(checks[i]);
+                if (isCorrect) correctAnswer++;
+                answer = new Answer(question,answerTexts[i],isCorrect);
+                getSession().save(answer);
+            }
+            if (correctAnswer == 1) {
+                question.setQuestionType(QuestionType.SINGLE_CHOICE);
+            }
+            else if (correctAnswer == 0){
+                question.setQuestionType(QuestionType.FREE);
+            }
+            else {
+                question.setQuestionType(QuestionType.MULTI_CHOICE);
+            }
             getSession().save(question);
             commit();
             return question;
         }catch (HibernateException e){
             rollback();
+            System.out.println("Cannot create question");
             LOG.error("Can not create question " + questionText);
             throw new HibernateException(e);
         }

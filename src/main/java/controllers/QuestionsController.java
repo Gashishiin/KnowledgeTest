@@ -7,15 +7,13 @@ import base.Discipline;
 import base.Question;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
+import org.w3c.dom.html.HTMLInputElement;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 public class QuestionsController {
@@ -44,14 +42,25 @@ public class QuestionsController {
             for (Answer a :
                     answerList) {
                 questionsWithAnswers+=(a.isCorrect()
-                        ? "<li style=\"list-style: disc\">"
-                        : "<li style=\"list-style: circle\">")
+                        ? "<li style=\"list-style-image: url(/resources/img/right.png)\">"
+                        : "<li style=\"list-style-image: url(/resources/img/wrong.png)\">")
                         + a.getAnswerText()+"</li>\n";
             }
         }
         return questionsWithAnswers;
     }
 
+    @RequestMapping("/createquestion")
+    @ResponseBody
+    public String createQuestion(WebRequest request, Model model){
+        String questionText = request.getParameter("questiontext");
+        String[] answerText = request.getParameterValues("answertext[]");
+        String[] checks = request.getParameterValues("checkanswer[]");
+        String disciplineidtext = request.getParameter("disciplineid");
+        long disciplineID = Long.parseLong(disciplineidtext);
+        new QuestionDAO().createQuestion(disciplineID,questionText,answerText,checks);
+        return questionText;
+    }
 
 
 }

@@ -33,7 +33,10 @@ public class UserController {
         if ( nothingDelete!= null) model.addAttribute(NOTHING_DELETE,"No users to delete");
         String userExists = request.getParameter(ALREADY_EXISTS);
         if ( userExists!= null) model.addAttribute(ALREADY_EXISTS,"User " + userExists + " already exists");
-
+        for (Users u :
+                usersList) {
+            System.out.println("User" + u.toString());
+        }
         return "users";
     }
 
