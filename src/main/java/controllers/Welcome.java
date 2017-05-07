@@ -9,4 +9,10 @@ public class Welcome {
     public String hello(){
         return "welcome";
     }
+
+    @RequestMapping(value = "login")
+    public String login(){return "login";}
+
+    @RequestMapping(value = "include")
+    public String include(){return "include";}
 }

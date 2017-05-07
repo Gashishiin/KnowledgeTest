@@ -8,12 +8,11 @@ import base.Question;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
-import org.w3c.dom.html.HTMLInputElement;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class QuestionsController {
@@ -29,25 +28,32 @@ public class QuestionsController {
     @RequestMapping("/question_list")
     @ResponseBody
     public String getQuestionList(WebRequest request, Model model){
-        String questionsWithAnswers="";
+        StringBuilder questionsWithAnswers= new StringBuilder();
         String discipline = request.getParameter("disciplineID");
         long disciplineID = Long.parseLong(discipline);
-        List<Question> questionList = new ArrayList<Question>();
+        List<Question> questionList;
         questionList = new QuestionDAO().retrieveQuestionByDiscipline(disciplineID);
         List<Answer> answerList;
         for (Question q :
                 questionList) {
-            questionsWithAnswers+=q.getQuestionText()+"\n";
+            questionsWithAnswers
+                    .append("<div id=\"q_")
+                    .append(q.getQuestionID())
+                    .append("\">")
+                    .append(q.getQuestionText())
+                    .append("\n");
             answerList = new QuestionDAO().retrieveAnswers(q.getQuestionID());
             for (Answer a :
                     answerList) {
-                questionsWithAnswers+=(a.isCorrect()
+                questionsWithAnswers.append(a.isCorrect()
                         ? "<li style=\"list-style-image: url(/resources/img/right.png)\">"
                         : "<li style=\"list-style-image: url(/resources/img/wrong.png)\">")
-                        + a.getAnswerText()+"</li>\n";
+                        .append(a.getAnswerText()).append("</li>\n");
             }
+            questionsWithAnswers.append("</div>");
         }
-        return questionsWithAnswers;
+        System.out.println("Question and answers" + questionsWithAnswers.toString());
+        return questionsWithAnswers.toString();
     }
 
     @RequestMapping("/createquestion")
@@ -57,9 +63,18 @@ public class QuestionsController {
         String[] answerText = request.getParameterValues("answertext[]");
         String[] checks = request.getParameterValues("checkanswer[]");
         String disciplineidtext = request.getParameter("disciplineid");
+        System.out.println("Request " + request.getParameterMap());
+
         long disciplineID = Long.parseLong(disciplineidtext);
         new QuestionDAO().createQuestion(disciplineID,questionText,answerText,checks);
         return questionText;
+    }
+
+    @RequestMapping("deletequestion")
+    @ResponseBody
+    public String deleteQuestion(WebRequest request, Model model){
+
+        return "";
     }
 
 

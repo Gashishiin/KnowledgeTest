@@ -4,6 +4,7 @@ package base;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "Users")
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,15 +13,21 @@ public class Users {
     private String login;
     @Column(nullable = false)
     private String password;
-    @Column (nullable = false)
+    @Column(nullable = false)
     private String fullname;
 
-    public Users(){}
+    @Enumerated(EnumType.ORDINAL)
+    private UserRole userRole;
 
-    public Users(String login, String password, String fullname) {
+
+    public Users() {
+    }
+
+    public Users(String login, String password, String fullname, UserRole userRole) {
         this.login = login;
         this.password = password;
         this.fullname = fullname;
+        this.userRole = userRole;
     }
 
     public long getUserID() {
@@ -55,10 +62,15 @@ public class Users {
         this.fullname = fullname;
     }
 
+    public UserRole getUserRole() {return userRole;}
+
+    public void setUserRole(UserRole userRole) {this.userRole = userRole;}
+
     @Override
     public String toString() {
         return "id = " + userID +
                 "\t login = " + login +
-                "\t fullname = " + fullname ;
+                "\t fullname = " + fullname+
+                "\t role = " + userRole;
     }
 }

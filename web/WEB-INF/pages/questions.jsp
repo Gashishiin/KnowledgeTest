@@ -48,17 +48,6 @@
             });
         });
 
-    </script>
-</head>
-<body>
-<div id="header">
-    <a href="${pageContext.request.contextPath}/">Go home</a>
-</div>
-<div id="buttons">
-    <button onclick="createDiscipline()">New Discipline</button>
-    <button onclick="deleteDiscipline()">Delete Discipline</button>
-    <button onclick="deleteQuestion()">Delete Question</button>
-    <script>
         function createDiscipline() {
             var disciplineName = prompt("Enter discipline name");
             if (disciplineName != null && disciplineName != "") {
@@ -85,6 +74,9 @@
 
         function createQuestion() {
             var str = $('#answerbox input:not([type="checkbox"])').serialize();
+            var textarea = $('#answerbox textarea').serialize();
+            if (str!="" && textarea!="") str +=  "&" + textarea;
+            else str += textarea;
             var str1 = $("#answerbox input[type='checkbox']").map(function () {
                 return this.name + "=" + this.checked;
             }).get().join("&");
@@ -112,7 +104,23 @@
             console.log("Remove div " + this.text);
             $(this).parent('div').remove();
         }
+        $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+            var token = $('meta[name="csrf-token"]').attr('content');
+            return jqXHR.setRequestHeader('X-CSRF-Token', token);
+        })
     </script>
+    <meta name="csrf-token" content="${_csrf.token}"/>
+
+</head>
+<body>
+<div id="header">
+    <jsp:include page="include.jsp"/>
+</div>
+<div id="buttons">
+    <button onclick="createDiscipline()">New Discipline</button>
+    <button onclick="deleteDiscipline()">Delete Discipline</button>
+    <button onclick="deleteQuestion()">Delete Question</button>
+
 </div>
 
 <div id="wrap">
@@ -121,7 +129,7 @@
         <form action="#" method="post" onsubmit="createQuestion();return false" id="answerbox">
             <div id="input_fields_wrap">
                 Input Question:<br/>
-                <textarea type="text" name="questiontext" id="questiontext" cols="40" rows="3"></textarea>
+                <textarea name="questiontext" rows="3" cols="40"></textarea>
                 <br/>
                 <button onclick="addAnswer()">Add Answer</button>
                 <div id="answer"><input type="text" name="answertext[]"><input type="checkbox" name="checkanswer[]">

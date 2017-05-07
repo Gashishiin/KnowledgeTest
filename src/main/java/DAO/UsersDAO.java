@@ -1,5 +1,6 @@
 package DAO;
 
+import base.UserRole;
 import base.Users;
 import exceptions.UserDuplicatesException;
 import org.hibernate.HibernateException;
@@ -14,12 +15,12 @@ import java.util.List;
 public class UsersDAO extends HibernateUtil {
     private static final Logger LOG = LoggerFactory.getLogger(UsersDAO.class);
 
-    public Users createUser(String login, String password, String fullname)
+    public Users createUser(String login, String password, String fullname, UserRole userRole)
             throws UserDuplicatesException, HibernateException{
         try{
             begin();
             String errorMessage="";
-            Users user = new Users(login,password,fullname);
+            Users user = new Users(login,password,fullname,userRole);
             getSession().save(user);
             commit();
             return user;

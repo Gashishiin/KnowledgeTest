@@ -1,6 +1,7 @@
 package controllers;
 
 import DAO.UsersDAO;
+import base.UserRole;
 import base.Users;
 import exceptions.UserDuplicatesException;
 import org.hibernate.HibernateException;
@@ -35,7 +36,6 @@ public class UserController {
         if ( userExists!= null) model.addAttribute(ALREADY_EXISTS,"User " + userExists + " already exists");
         for (Users u :
                 usersList) {
-            System.out.println("User" + u.toString());
         }
         return "users";
     }
@@ -45,8 +45,9 @@ public class UserController {
         String login = request.getParameter("login");
         String password = request.getParameter("password");
         String fullname = request.getParameter("fullname");
+        String userrole = request.getParameter("role").toUpperCase();
         try {
-            new UsersDAO().createUser(login, password, fullname);
+            new UsersDAO().createUser(login, password, fullname, UserRole.valueOf(userrole));
         } catch (HibernateException e) {
             e.printStackTrace();
         } catch (UserDuplicatesException e) {
