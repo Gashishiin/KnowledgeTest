@@ -4,8 +4,9 @@
     <title>Welcome</title>
 </head>
 <body>
-<a href="${pageContext.request.contextPath}/users">Show all users</a><br/>
-<a href="${pageContext.request.contextPath}/questions">Questions</a><br/>
+<a href="${pageContext.request.contextPath}/users">Пользователи</a><br/>
+<a href="${pageContext.request.contextPath}/questions">Разделы и Вопросы</a><br/>
+<a href="${pageContext.request.contextPath}/testmanagement">Управление тестами</a><br/>
 
 </body>
 </html>

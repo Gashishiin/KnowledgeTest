@@ -8,10 +8,7 @@
 </head>
 <body>
 <h1>Login page</h1>
-<p>Valid users:
-<p>username: <b>user</b>, password: <b>user</b></p>
-<p>username: <b>admin</b>, password: <b>admin</b></p>
-<p>username: <b>guest</b>, password: <b>guest</b></p>
+
 
 <c:if test="${not empty param.login_error}">
   <span style="color: red; ">

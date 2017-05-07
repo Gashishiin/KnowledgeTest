@@ -30,11 +30,14 @@ public class DisciplineController {
         }
 
             new DisciplineDAO().createDiscipline(disciplineName,parentDisciplineID);
+        List<Discipline> disciplines =  new DisciplineDAO().retrieveDisciplines();
+        model.addAttribute("disciplines",disciplines);
         return "Created discipline " + disciplineName;
     }
 
 
     @RequestMapping(value = "/disciplines")
+    @ResponseBody
     public String getDisciplines(WebRequest request,Model model){
         List<Discipline> disciplineList = new ArrayList<Discipline>();
         try{
@@ -43,7 +46,7 @@ public class DisciplineController {
 
         }
         model.addAttribute("disciplinelist", disciplineList);
-        return ("/disciplines");
+        return "/disciplines";
     }
 
     @RequestMapping(value = "/deletediscipline")

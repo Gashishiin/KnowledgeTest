@@ -18,15 +18,7 @@
                     n.push(data.instance.get_node(data.selected[i]).text);
                     DTree.id = r[0];
                     DTree.name = n[0];
-                    $.ajax({
-                            type: "POST",
-                            url: "/question_list",
-                            data: "disciplineID=" + DTree.id,
-                            success: function (data) {
-                                $("#question_list").html(data);
-                            }
-                        }
-                    );
+                    renderQuestions();
                 }
             })
                 .jstree({
@@ -46,7 +38,21 @@
             $("#discipline_tree").on("ready.jstree", function () {
                 $("#discipline_tree").jstree("open_all");
             });
+            initQuestionFormCreation();
         });
+
+        function renderQuestions() {
+            $.ajax({
+                    type: "POST",
+                    url: "/question_list",
+                    data: "disciplineID=" + DTree.id,
+                    success: function (data) {
+                        $("#question_list").html(data);
+                        console.log("Questions html " + data);
+                    }
+                }
+            );
+        }
 
         function createDiscipline() {
             var disciplineName = prompt("Enter discipline name");
@@ -54,19 +60,20 @@
                 $.post("/creatediscipline",
                     {
                         disciplineName: disciplineName,
-                        parentDisciplineID: DTree.id,
+                        parentDisciplineID: DTree.id
                     },
                     function () {
-                        DTree.tree.jstree("refresh");
+                        $.get('/questions');
+                        $('#discipline_tree').jstree("refresh");
                     }
                 )
             }
         }
         function deleteDiscipline() {
             if (window.confirm("Are sure to delete discipline " + DTree.name + "?")) {
-                $.post("/deletedisciplinearray",
+                $.post("/deletediscipline",
                     {
-                        disciplineArray: DTree.array
+                        disciplineID: DTree.id
                     }
                 )
             }
@@ -86,28 +93,65 @@
             $.ajax({
                 type: "POST",
                 url: "/createquestion",
-                data: str
+                data: str,
+                success: function () {
+                    renderQuestions();
+                    initQuestionFormCreation();
+                }
+            })
+
+        }
+
+        function deleteQuestions() {
+            var qids = $('#questionbox').serialize();
+            $.ajax({
+                type: "POST",
+                url: "deletequestions",
+                data: qids,
+                success: function () {
+                    renderQuestions();
+                }
             })
         }
 
-        function deleteQuestion() {
+        var answercount = 1;
+        var answerid;
 
-        }
         function addAnswer() {
-            var line = '<div id="answer">' +
+            answercount++;
+            answerid="answerid"+answercount;
+            var newAnswer = document.createElement('div');
+            newAnswer.innerHTML = '<div id="' +  answerid +'">' +
                 '<input type="text" name="answertext[]">' +
                 '<input type="checkbox" name="checkanswer[]">' +
                 '<a href="#" onclick="deleteAnswer()">Remove</a></div>';
-            document.getElementById("input_fields_wrap").innerHTML += line;
+
+            document.getElementById("input_fields_wrap").appendChild(newAnswer);
+            console.log("Added Answerid " + answerid);
         }
+
         function deleteAnswer() {
-            console.log("Remove div " + this.text);
-            $(this).parent('div').remove();
+            answerid="answerid"+answercount;
+            var element = document.getElementById(answerid);
+            element.outerHTML="";
+            delete  element;
+            console.log("Deleted answerid" + answerid);
+            answercount--;
         }
         $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
             var token = $('meta[name="csrf-token"]').attr('content');
             return jqXHR.setRequestHeader('X-CSRF-Token', token);
-        })
+        });
+
+        function initQuestionFormCreation() {
+            answercount = 1;
+            $('#input_fields_wrap').html('Input Question:<br/>'+
+                '<textarea name="questiontext" rows="3" cols="40"></textarea><br/>'+
+                '<button type="button" onclick="addAnswer()">Add Answer</button>'+
+                '<div id="answerfield1">' +
+                '<input type="text" name="answertext[]"><input type="checkbox" name="checkanswer[]">'+
+                '</div>');
+        }
     </script>
     <meta name="csrf-token" content="${_csrf.token}"/>
 
@@ -119,25 +163,17 @@
 <div id="buttons">
     <button onclick="createDiscipline()">New Discipline</button>
     <button onclick="deleteDiscipline()">Delete Discipline</button>
-    <button onclick="deleteQuestion()">Delete Question</button>
+    <button onclick="deleteQuestions()">Delete Question</button>
 
 </div>
 
 <div id="wrap">
     <div id="discipline_tree" style="float: left; width: 200px"></div>
     <div id="right-panel" style="margin-left: 220px;">
-        <form action="#" method="post" onsubmit="createQuestion();return false" id="answerbox">
-            <div id="input_fields_wrap">
-                Input Question:<br/>
-                <textarea name="questiontext" rows="3" cols="40"></textarea>
-                <br/>
-                <button onclick="addAnswer()">Add Answer</button>
-                <div id="answer"><input type="text" name="answertext[]"><input type="checkbox" name="checkanswer[]">
-                </div>
-
-            </div>
-            <input type="submit" value="Create question">
+        <form id="answerbox" method="post" action="#">
+            <div id="input_fields_wrap"></div>
         </form>
+        <button onclick="createQuestion()">Create question</button>
         <div id="question_list"></div>
     </div>
 

@@ -14,7 +14,9 @@
         <intercept-url pattern="/users" access="ROLE_ADMIN"/>
         <intercept-url pattern="/createuser" access="ROLE_ADMIN"/>
         <intercept-url pattern="/deleteusers" access="ROLE_ADMIN"/>
-        <intercept-url pattern="/question_list" access="ROLE_ADMIN, ROLE_METHODIST"/>
+        <intercept-url pattern="/questionlist" access="ROLE_ADMIN, ROLE_METHODIST"/>
+        <intercept-url pattern="/deletequestions" access="ROLE_ADMIN,ROLE_METHODIST"/>
+        <intercept-url pattern="/testmanagement" access="ROLE_ADMIN,ROLE_METHODIST"/>
         <intercept-url pattern="/include" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <intercept-url pattern="/exitUser*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
 

@@ -24,6 +24,7 @@ public class HibernateUtil {
     }
 
     protected void begin(){
+        if (!getSession().getTransaction().isActive())
         getSession().beginTransaction();
     }
 

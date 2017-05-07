@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -93,6 +94,25 @@ public class QuestionDAO extends HibernateUtil {
             rollback();
             LOG.error("Cannot retrieve answers of question " + questionID) ;
             throw new HibernateException(e);
+        }
+    }
+    
+    public void deleteQuestions(long[] questionIDs){
+        try{
+            List<Question> questions = new ArrayList<Question>();
+            for (long id :
+                    questionIDs) {
+                    questions.add(retrieveQuestion(id));
+            }
+            begin();
+            for (Question q :
+                    questions) {
+                getSession().delete(q);
+            }
+            commit();
+        }catch (HibernateException e){
+            rollback();
+            LOG.error("Can not delete questions" + Arrays.toString(questionIDs));
         }
     }
 }

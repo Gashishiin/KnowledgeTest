@@ -34,12 +34,15 @@ public class QuestionsController {
         List<Question> questionList;
         questionList = new QuestionDAO().retrieveQuestionByDiscipline(disciplineID);
         List<Answer> answerList;
-        for (Question q :
-                questionList) {
+        Question q;
+        for (int i = 0; i < questionList.size();i++) {
+            q = questionList.get(i);
             questionsWithAnswers
-                    .append("<div id=\"q_")
+                    .append("<div>")
+                    .append("<input type=\"checkbox\" name=\"checkboxquestion\" value=\"")
                     .append(q.getQuestionID())
                     .append("\">")
+                    .append(i + 1 + ". ")
                     .append(q.getQuestionText())
                     .append("\n");
             answerList = new QuestionDAO().retrieveAnswers(q.getQuestionID());
@@ -50,9 +53,9 @@ public class QuestionsController {
                         : "<li style=\"list-style-image: url(/resources/img/wrong.png)\">")
                         .append(a.getAnswerText()).append("</li>\n");
             }
-            questionsWithAnswers.append("</div>");
+            questionsWithAnswers.append("</div><br/>");
         }
-        System.out.println("Question and answers" + questionsWithAnswers.toString());
+        System.out.println("Questions with answer " + questionsWithAnswers.toString());
         return questionsWithAnswers.toString();
     }
 
@@ -63,17 +66,21 @@ public class QuestionsController {
         String[] answerText = request.getParameterValues("answertext[]");
         String[] checks = request.getParameterValues("checkanswer[]");
         String disciplineidtext = request.getParameter("disciplineid");
-        System.out.println("Request " + request.getParameterMap());
 
         long disciplineID = Long.parseLong(disciplineidtext);
         new QuestionDAO().createQuestion(disciplineID,questionText,answerText,checks);
         return questionText;
     }
 
-    @RequestMapping("deletequestion")
+    @RequestMapping("deletequestions")
     @ResponseBody
     public String deleteQuestion(WebRequest request, Model model){
-
+        String[] textIDs = request.getParameterValues("checkboxquestion");
+        long[] ids = new long[textIDs.length];
+        for (int i = 0; i < textIDs.length; i++) {
+            ids[i] = Long.parseLong(textIDs[i]);
+        }
+        new QuestionDAO().deleteQuestions(ids);
         return "";
     }
 
