@@ -45,7 +45,6 @@ public class QuestionDAO extends HibernateUtil {
             return question;
         }catch (HibernateException e){
             rollback();
-            System.out.println("Cannot create question");
             LOG.error("Can not create question " + questionText);
             throw new HibernateException(e);
         }
@@ -93,6 +92,21 @@ public class QuestionDAO extends HibernateUtil {
         }catch (HibernateException e){
             rollback();
             LOG.error("Cannot retrieve answers of question " + questionID) ;
+            throw new HibernateException(e);
+        }
+    }
+
+    public Answer retrieveAnswer(long answerID){
+        try{
+            begin();
+            Query query = getSession().createQuery("from Answer where  answerID = :answerID");
+            query.setParameter("answerID", answerID);
+            Answer answer = (Answer)query.uniqueResult();
+            commit();
+            return answer;
+        }catch (HibernateException e){
+            rollback();
+            LOG.error("Cannot retrieve andswer " + answerID);
             throw new HibernateException(e);
         }
     }

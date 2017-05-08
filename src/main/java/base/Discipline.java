@@ -17,6 +17,9 @@ public class Discipline {
     @OneToMany(mappedBy = "discipline",cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
     private Set<Question> questionSet = new HashSet<Question>();
 
+    @OneToOne(mappedBy = "discipline",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private TestManagement assignment;
+
     public Discipline() {
     }
 

@@ -2,6 +2,8 @@ package base;
 
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "Users")
@@ -18,6 +20,10 @@ public class Users {
 
     @Enumerated(EnumType.ORDINAL)
     private UserRole userRole;
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<TestManagement> assignments = new HashSet<TestManagement>();
+
 
 
     public Users() {

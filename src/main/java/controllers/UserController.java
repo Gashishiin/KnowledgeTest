@@ -22,13 +22,7 @@ public class UserController {
 
     @RequestMapping("/users")
     public String getUsers(WebRequest request, Model model) {
-        List<Users> usersList = new ArrayList();
-        try {
-            usersList = new UsersDAO().retrieveAllUsers();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        List<Users> usersList  = new UsersDAO().retrieveAllUsers();
         model.addAttribute("userlist", usersList);
         String nothingDelete = request.getParameter(NOTHING_DELETE);
         if ( nothingDelete!= null) model.addAttribute(NOTHING_DELETE,"No users to delete");

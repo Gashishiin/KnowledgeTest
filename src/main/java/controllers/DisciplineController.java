@@ -38,22 +38,25 @@ public class DisciplineController {
 
     @RequestMapping(value = "/disciplines")
     @ResponseBody
-    public String getDisciplines(WebRequest request,Model model){
-        List<Discipline> disciplineList = new ArrayList<Discipline>();
-        try{
-            disciplineList = new DisciplineDAO().retrieveDisciplines();
-        }catch (HibernateException e){
-
+    public String getDisciplines(){
+        List<Discipline> disciplineList = new DisciplineDAO().retrieveDisciplines();
+        String disciplineTreeBody = "";
+        disciplineTreeBody+="[{\"id\": \"0\", \"parent\": \"#\", \"text\": \"Top\", \"state\": {\"selected\": \"true\"}},";
+        for (Discipline d :
+                disciplineList) {
+            disciplineTreeBody+="{\"id\":\""+d.getDisciplineID()
+                    +"\",\"parent\":\""+d.getParentDisciplineID()
+                    +"\",\"text\":\""+d.getDisciplineName()
+                    +"\"},";
         }
-        model.addAttribute("disciplinelist", disciplineList);
-        return "/disciplines";
+        disciplineTreeBody=disciplineTreeBody.substring(0,disciplineTreeBody.length()-1)+"]";
+        return disciplineTreeBody;
     }
 
     @RequestMapping(value = "/deletediscipline")
     @ResponseBody
     public String deleteDiscipline(@RequestParam(value = "disciplineID") long disciplineID){
         String disciplineName = new DisciplineDAO().retrieveDiscipline(disciplineID).getDisciplineName();
-        System.out.println("Deleting discipline " + disciplineName);
         new DisciplineDAO().deleteDiscipline(disciplineID);
         return disciplineName;
     }

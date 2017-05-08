@@ -7,6 +7,7 @@
 <a href="${pageContext.request.contextPath}/users">Пользователи</a><br/>
 <a href="${pageContext.request.contextPath}/questions">Разделы и Вопросы</a><br/>
 <a href="${pageContext.request.contextPath}/testmanagement">Управление тестами</a><br/>
+<a href="${pageContext.request.contextPath}/test">Пройти тест</a><br/>
 
 </body>
 </html>

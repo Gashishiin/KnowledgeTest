@@ -11,17 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 public class QuestionsController {
 
-    public static List<Discipline> disciplines = new ArrayList<Discipline>();
     @RequestMapping("/questions")
-    public String getQuestions(WebRequest request, Model model){
-        disciplines = new DisciplineDAO().retrieveDisciplines();
-        model.addAttribute("disciplines",disciplines);
+    public String getQuestions(){
         return "questions";
     }
 
@@ -42,7 +38,8 @@ public class QuestionsController {
                     .append("<input type=\"checkbox\" name=\"checkboxquestion\" value=\"")
                     .append(q.getQuestionID())
                     .append("\">")
-                    .append(i + 1 + ". ")
+                    .append(i + 1)
+                    .append(". ")
                     .append(q.getQuestionText())
                     .append("\n");
             answerList = new QuestionDAO().retrieveAnswers(q.getQuestionID());
@@ -55,7 +52,6 @@ public class QuestionsController {
             }
             questionsWithAnswers.append("</div><br/>");
         }
-        System.out.println("Questions with answer " + questionsWithAnswers.toString());
         return questionsWithAnswers.toString();
     }
 

@@ -17,9 +17,13 @@
         <intercept-url pattern="/questionlist" access="ROLE_ADMIN, ROLE_METHODIST"/>
         <intercept-url pattern="/deletequestions" access="ROLE_ADMIN,ROLE_METHODIST"/>
         <intercept-url pattern="/testmanagement" access="ROLE_ADMIN,ROLE_METHODIST"/>
+        <intercept-url pattern="/disciplines" access="ROLE_METHODIST, ROLE_ADMIN"/>
+        <intercept-url pattern="/assigntest" access="ROLE_ADMIN, ROLE_METHODIST"/>
+        <intercept-url pattern="/test" access="ROLE_METHODIST, ROLE_ADMIN, ROLE_STUDENT"/>
+        <intercept-url pattern="/submitresults" access="ROLE_ADMIN,ROLE_METHODIST,ROLE_STUDENT"/>
         <intercept-url pattern="/include" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <intercept-url pattern="/exitUser*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-
+        <logout logout-success-url="/logout" />
         <form-login login-page="/login"
                     authentication-failure-url="/login?login_error"/>
         <http-basic/>

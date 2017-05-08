@@ -14,6 +14,7 @@
         <mapping class="base.Discipline"/>
         <mapping class="base.Question"/>
         <mapping class="base.Answer"/>
+        <mapping class="base.TestManagement"/>
 
     </session-factory>
 </hibernate-configuration>

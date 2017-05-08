@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class UsersDAO extends HibernateUtil {
@@ -47,6 +48,21 @@ public class UsersDAO extends HibernateUtil {
         }catch (HibernateException e){
             rollback();
             LOG.error("Cannot retrieve user " + login, e);
+            throw new HibernateException(e);
+        }
+    }
+
+    public List<Users> retrieveUsersByLogin(String[] logins){
+        try {
+            begin();
+            Query query = getSession().createQuery("from Users where login in (:logins)");
+            query.setParameter("logins", Arrays.asList(logins));
+            List<Users> usersList = query.getResultList();
+            commit();
+            return usersList;
+        }catch (HibernateException e){
+            rollback();
+            LOG.error("Cannot retrieve users " + Arrays.toString(logins));
             throw new HibernateException(e);
         }
     }

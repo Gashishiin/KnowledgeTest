@@ -7,11 +7,21 @@
     <script src="/resources/jquery/jquery-3.2.1.js"></script>
     <script src="/resources/jsTree/jstree.js"></script>
     <link rel="stylesheet" href="/resources/jsTree/themes/default/style.css"/>
-
     <script>
         var DTree = {};
+        DTree.treename = "discipline_tree";
         $(document).ready(function () {
-            $("#discipline_tree").on('changed.jstree', function (e, data) {
+            $("#"+DTree.treename).jstree({
+                'core': {
+                    'data': {
+                        type: "POST",
+                        url: "/disciplines",
+                        dataType: "json"
+                    }
+                }
+            }).on("ready.jstree", function () {
+                $("#"+DTree.treename).jstree("open_all");
+            }).on('changed.jstree', function (e, data) {
                 var i, j, r = [], n = [];
                 for (i = 0, j = data.selected.length; i < j; i++) {
                     r.push(data.instance.get_node(data.selected[i]).id);
@@ -20,23 +30,6 @@
                     DTree.name = n[0];
                     renderQuestions();
                 }
-            })
-                .jstree({
-                    'core': {
-                        'data': [
-                            {"id": "0", "parent": "#", "text": "Top", "state": {"selected": "true"}},
-                            <c:forEach items="${disciplines}" var="disciplines">
-                            {
-                                "id": "${disciplines.disciplineID}",
-                                "parent": "${disciplines.parentDisciplineID}",
-                                "text": "${disciplines.disciplineName}"
-                            },
-                            </c:forEach>
-                        ]
-                    }
-                });
-            $("#discipline_tree").on("ready.jstree", function () {
-                $("#discipline_tree").jstree("open_all");
             });
             initQuestionFormCreation();
         });
@@ -48,7 +41,6 @@
                     data: "disciplineID=" + DTree.id,
                     success: function (data) {
                         $("#question_list").html(data);
-                        console.log("Questions html " + data);
                     }
                 }
             );
@@ -140,6 +132,7 @@
         }
         $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
             var token = $('meta[name="csrf-token"]').attr('content');
+            console.log("Prefilter " + token);
             return jqXHR.setRequestHeader('X-CSRF-Token', token);
         });
 

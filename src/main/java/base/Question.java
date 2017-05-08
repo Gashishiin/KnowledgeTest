@@ -49,6 +49,10 @@ public class Question {
     @Enumerated(EnumType.ORDINAL)
     private QuestionType questionType;
 
+    public QuestionType getQuestionType() {
+        return questionType;
+    }
+
     public long getQuestionID() {
         return questionID;
     }
