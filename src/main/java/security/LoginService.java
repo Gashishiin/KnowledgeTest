@@ -15,13 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service("loginService")
 public class LoginService implements UserDetailsService {
 
 
+
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
         Users user = new UsersDAO().retrieveUser(username);
         if (user == null) throw new UsernameNotFoundException(username);
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();

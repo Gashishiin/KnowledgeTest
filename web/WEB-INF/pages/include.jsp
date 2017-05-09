@@ -1,6 +1,8 @@
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<div style="float: right">
 <a href="${pageContext.request.contextPath}/">Go home</a>
-<br/>Your logged as <sec:authentication property="principal.username"/>
-<br/>You are <sec:authentication property="principal.authorities"/>
-
+<br/>Вы вошли как ${fullname}
+<br/><a href="/logout">Выйти</a>
+</div>
 <br/>

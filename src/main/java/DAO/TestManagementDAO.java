@@ -75,8 +75,7 @@ public class TestManagementDAO extends HibernateUtil {
             begin();
             test.setTestDone(true);
             test.setResultScore(score);
-            getSession().save(test);
-            getSession().flush();
+            getSession().update(test);
             commit();
             return test;
         }catch (HibernateException e){
@@ -86,5 +85,19 @@ public class TestManagementDAO extends HibernateUtil {
         }
     }
 
-
+    public List<TestManagement> retrieveAssignmentsByUserID(long userID){
+        try{
+            Users user = new UsersDAO().retrieveUserByID(userID);
+            begin();
+            Query query = getSession().createQuery("from TestManagement where user.userID = :userID");
+            query.setParameter("userID",userID);
+            List<TestManagement> assignments = query.getResultList();
+            commit();
+            return assignments;
+        }catch (HibernateException e){
+            rollback();
+            LOG.error("Cannot retrieve assignments for" + userID);
+            throw new HibernateException(e);
+        }
+    }
 }

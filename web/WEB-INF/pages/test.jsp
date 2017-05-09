@@ -21,7 +21,7 @@
                 url: "/submitresults",
                 data: data,
                 success: function () {
-                    window.location.href="/test";
+                    window.location.href = "/test";
                 }
             })
         }
@@ -35,24 +35,35 @@
 <body>
 <jsp:include page="/include"/>
 <div id="testassignment">
-    <c:if test="${assignedtestlist != null && !empty assignedtestlist}">
-        <form id="assignmentform" method="post" action="/test">
-            <c:forEach items="${assignedtestlist}" var="assignment" varStatus="loop" >
-                <input type="radio" name="id" value="${assignment.assignmentID}" ${loop.index == 0 ? 'checked' : ''}>
-                ${assignment.discipline.disciplineName}
-            </c:forEach>
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            <br/><input type="submit" value="Начать тест"/>
-        </form>
-    </c:if>
+    <c:choose>
+        <c:when test="${assignedtestlist != null && !empty assignedtestlist}">
+            <form id="assignmentform" method="post" action="/test">
+                <c:forEach items="${assignedtestlist}" var="assignment" varStatus="loop">
+                    <input type="radio" name="id"
+                           value="${assignment.assignmentID}" ${loop.index == 0 ? 'checked' : ''}>
+                    ${assignment.discipline.disciplineName}
+                </c:forEach>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <br/><input type="submit" value="Начать тест"/>
+            </form>
+        </c:when>
+        <c:otherwise>
+            Назначенных тестов нет
+        </c:otherwise>
+    </c:choose>
 </div>
 <div id="passedtest">
-    <c:if test="${donetestlist != null && !empty donetestlist}">
-        Пройденные тесты<br/>
-        <c:forEach items="${donetestlist}" var="donetest">
-            ${donetest.discipline.disciplineName}: ${donetest.resultScore}<br/>
-        </c:forEach>
-    </c:if>
+    <c:choose>
+        <c:when test="${donetestlist != null && !empty donetestlist}">
+            Пройденные тесты<br/>
+            <c:forEach items="${donetestlist}" var="donetest">
+                ${donetest.discipline.disciplineName}: ${donetest.resultScore}<br/>
+            </c:forEach>
+        </c:when>
+        <c:otherwise>
+            Пройденных тестов нет
+        </c:otherwise>
+    </c:choose>
 </div>
 
 <c:if test="${questionlist!=null && !empty questionlist}">

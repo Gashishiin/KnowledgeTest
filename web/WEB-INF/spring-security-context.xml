@@ -15,26 +15,36 @@
         <intercept-url pattern="/createuser" access="ROLE_ADMIN"/>
         <intercept-url pattern="/deleteusers" access="ROLE_ADMIN"/>
         <intercept-url pattern="/questionlist" access="ROLE_ADMIN, ROLE_METHODIST"/>
+        <intercept-url pattern="/getquestion" access="ROLE_ADMIN, ROLE_METHODIST"/>
+        <intercept-url pattern="/updatequestion" access="ROLE_METHODIST, ROLE_ADMIN"/>
         <intercept-url pattern="/deletequestions" access="ROLE_ADMIN,ROLE_METHODIST"/>
         <intercept-url pattern="/testmanagement" access="ROLE_ADMIN,ROLE_METHODIST"/>
         <intercept-url pattern="/disciplines" access="ROLE_METHODIST, ROLE_ADMIN"/>
         <intercept-url pattern="/assigntest" access="ROLE_ADMIN, ROLE_METHODIST"/>
+        <intercept-url pattern="/getassignments" access="ROLE_ADMIN, ROLE_METHODIST"/>
         <intercept-url pattern="/test" access="ROLE_METHODIST, ROLE_ADMIN, ROLE_STUDENT"/>
         <intercept-url pattern="/submitresults" access="ROLE_ADMIN,ROLE_METHODIST,ROLE_STUDENT"/>
         <intercept-url pattern="/include" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <intercept-url pattern="/exitUser*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <intercept-url pattern="/logout" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <intercept-url pattern="/updateuser" access="ROLE_ADMIN"/>
+        <intercept-url pattern="/getuser" access="ROLE_ADMIN"/>
         <logout logout-success-url="/logout" />
         <form-login login-page="/login"
-                    authentication-failure-url="/login?login_error"/>
+                    authentication-failure-url="/login?login_error"
+                    authentication-success-handler-ref="myAuthenticationHandler"/>
         <http-basic/>
-        <logout logout-success-url="/exitUser.jsp"/>
         <remember-me />
         <headers/>
         <csrf/>
     </http>
+    <b:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+        <b:constructor-arg name="strength" value="12"/>
+    </b:bean>
+    <b:bean id="myAuthenticationHandler" class="security.MyAuthenticationHandler"/>
 
     <authentication-manager>
         <authentication-provider user-service-ref="loginService">
+            <password-encoder ref="passwordEncoder"/>
         </authentication-provider>
     </authentication-manager>
 

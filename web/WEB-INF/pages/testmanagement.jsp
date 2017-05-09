@@ -3,12 +3,15 @@
 
 <html>
 <head>
-    <title>Test assignment and results</title>
+    <title>Назначение тестов и результаты</title>
     <script src="/resources/jquery/jquery-3.2.1.js"></script>
     <script src="/resources/jsTree/jstree.js"></script>
     <link rel="stylesheet" href="/resources/jsTree/themes/default/style.css"/>
     <script>
-
+        $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+            var token = $('meta[name="csrf-token"]').attr('content');
+            return jqXHR.setRequestHeader('X-CSRF-Token', token);
+        });
         var DTree = {};
         DTree.treename = "discipline_tree";
         $(document).ready(function () {
@@ -37,16 +40,28 @@
             if (data !="") data+="&disciplineid="+DTree.id;
             $.ajax({
                 type: "POST",
-                url: "/assigntest",
+                url: "assigntest",
                 data: data,
                 success: function (data) {
                 }
             })
         }
-        $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
-            var token = $('meta[name="csrf-token"]').attr('content');
-            return jqXHR.setRequestHeader('X-CSRF-Token', token);
-        });
+
+        function showassignments(id) {
+            $.ajax({
+                type: "POST",
+                url: "getassignments",
+                data: "userid="+ id,
+                success: function (data) {
+                    $("#assignedtests").html(data);
+
+                    console.log("Assign response " + data);
+
+                }
+            })
+
+        }
+
     </script>
 
     <meta name="csrf-token" content="${_csrf.token}"/>
@@ -55,15 +70,24 @@
 <jsp:include page="/include"/>
 <div id="header">
     <div id="discipline_tree" style="float: left; width: 200px"></div>
+    <div style="margin-left: 20px; float: left;" >
     <form id="testassignment" method="post" action="#">
-    <div style="margin-left: 220px">
-        <button type="button" onclick="assigntest()">Assign test</button><br/>
+    
+        <p><button type="button" onclick="assigntest()">Назначить тест</button>
+            Количество вопросов <input type="number" min="1" max="100" size="2" name="questionamount">
+            </p>
         <c:forEach items="${userlist}" var="users">
+            <button type="button" onclick="showassignments(${users.userID})">Назначенные тесты</button>
             <input type="checkbox" name="login" value=${users.login}>
-            <c:out value="${users}"/><br/>
+            ${users.fullname} (${users.login}) ${users.userRole}
+            <br/>
         </c:forEach>
-    </div>
     </form>
+    </div>
+        
+    <div id="assignedtests" style="margin-left: 20px">
+
+    </div>
 
 </div>
 

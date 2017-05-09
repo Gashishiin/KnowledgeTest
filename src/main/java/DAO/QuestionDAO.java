@@ -9,9 +9,7 @@ import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 
 public class QuestionDAO extends HibernateUtil {
@@ -22,14 +20,13 @@ public class QuestionDAO extends HibernateUtil {
             Discipline discipline = new DisciplineDAO().retrieveDiscipline(disciplineID);
             begin();
             Question question = new Question(discipline,questionText);
-            Answer answer;
+            Set<Answer> answerSet = new HashSet<Answer>();
             int correctAnswer = 0;
             boolean isCorrect;
             for (int i = 0; i < answerTexts.length; i++) {
                 isCorrect = Boolean.valueOf(checks[i]);
                 if (isCorrect) correctAnswer++;
-                answer = new Answer(question,answerTexts[i],isCorrect);
-                getSession().save(answer);
+                answerSet.add(new Answer(question,answerTexts[i],isCorrect));
             }
             if (correctAnswer == 1) {
                 question.setQuestionType(QuestionType.SINGLE_CHOICE);
@@ -40,6 +37,7 @@ public class QuestionDAO extends HibernateUtil {
             else {
                 question.setQuestionType(QuestionType.MULTI_CHOICE);
             }
+            question.setAnswerSet(answerSet);
             getSession().save(question);
             commit();
             return question;
@@ -127,6 +125,42 @@ public class QuestionDAO extends HibernateUtil {
         }catch (HibernateException e){
             rollback();
             LOG.error("Can not delete questions" + Arrays.toString(questionIDs));
+            throw new HibernateException(e);
         }
+    }
+
+    public void updateQuestion(long questionID, long disciplineID, String questionText, String[] answerTexts, String[] checks){
+        try{
+            Question question = retrieveQuestion(questionID);
+            begin();
+            boolean isCorrect;
+            int correctAnswer = 0;
+            Set<Answer> answerSet = new HashSet<Answer>();
+            for (int i = 0; i < answerTexts.length; i++) {
+                isCorrect = Boolean.valueOf(checks[i]);
+                if (isCorrect) correctAnswer++;
+                answerSet.add(new Answer(question,answerTexts[i],isCorrect));
+            }
+            if (correctAnswer == 1) {
+                question.setQuestionType(QuestionType.SINGLE_CHOICE);
+            }
+            else if (correctAnswer == 0){
+                question.setQuestionType(QuestionType.FREE);
+            }
+            else {
+                question.setQuestionType(QuestionType.MULTI_CHOICE);
+            }
+            question.setQuestionText(questionText);
+            question.getAnswerSet().clear();
+            question.getAnswerSet().addAll(answerSet);
+            System.out.println("correct answers " + correctAnswer);
+            getSession().update(question);
+            commit();
+        }catch (HibernateException e){
+            rollback();
+            LOG.error("Cannot update question " + questionID);
+            throw new HibernateException(e);
+        }
+
     }
 }

@@ -1,9 +1,7 @@
 package controllers;
 
-import DAO.DisciplineDAO;
 import DAO.QuestionDAO;
 import base.Answer;
-import base.Discipline;
 import base.Question;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,16 +10,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class QuestionsController {
 
-    @RequestMapping("/questions")
+    @RequestMapping("questions")
     public String getQuestions(){
         return "questions";
     }
 
-    @RequestMapping("/question_list")
+    @RequestMapping("question_list")
     @ResponseBody
     public String getQuestionList(WebRequest request, Model model){
         StringBuilder questionsWithAnswers= new StringBuilder();
@@ -35,6 +34,8 @@ public class QuestionsController {
             q = questionList.get(i);
             questionsWithAnswers
                     .append("<div>")
+                    .append("<button type='button' onclick='editquestion(")
+                    .append(q.getQuestionID()).append(")'>Редактировать</button>")
                     .append("<input type=\"checkbox\" name=\"checkboxquestion\" value=\"")
                     .append(q.getQuestionID())
                     .append("\">")
@@ -55,7 +56,7 @@ public class QuestionsController {
         return questionsWithAnswers.toString();
     }
 
-    @RequestMapping("/createquestion")
+    @RequestMapping("createquestion")
     @ResponseBody
     public String createQuestion(WebRequest request, Model model){
         String questionText = request.getParameter("questiontext");
@@ -80,5 +81,44 @@ public class QuestionsController {
         return "";
     }
 
+    @RequestMapping("getquestion")
+    @ResponseBody
+    public String getQuestion(WebRequest request, Model model){
+        long questionID = Long.parseLong(request.getParameter("questionid"));
+        Question question = new QuestionDAO().retrieveQuestion(questionID);
+        String htmlBody="Введите вопрос:<br/>"+
+                "<textarea name='questiontext' rows='3' cols='60'>"+ question.getQuestionText() + "</textarea><br/>"+
+                "<button type='button' onclick='addAnswer()'>Добавить поле для ответа</button>"+
+                "<button style='margin-left: 10px' type='button' onclick='updateQuestion()'>Обновить вопрос</button>"+
+                "<button style='margin-left: 10px' type='button' onclick='initQuestionFormCreation()'>Отмена</button>";
+        Set<Answer> answerList = question.getAnswerSet();
+        int answerFieldNum = 1;
+        for (Answer a :
+                answerList) {
+            htmlBody+= "<div id='answerfield'" + answerFieldNum + "'>" +
+                    "<input type='text' name='answertext[]' value='" + a.getAnswerText()+ "'>" +
+                    "<input type='checkbox' name='checkanswer[]' " + (a.isCorrect() ? "checked" : "") + ">" +
+
+                    (answerFieldNum > 1 ? "<a href='#' onclick='deleteAnswer(this)'>Удалить поле</a>": "") +
+                    "</div>";
+            answerFieldNum++;
+        }
+        htmlBody+="<input type='hidden' name='questionid' value='" + questionID + "'>";
+
+        return htmlBody;
+    }
+
+    @RequestMapping("updatequestion")
+    @ResponseBody
+    public String updateQuestion(WebRequest request, Model model){
+        System.out.println("updateq " + request.getParameterMap());
+        String questionText = request.getParameter("questiontext");
+        long questionID = Long.parseLong(request.getParameter("questionid"));
+        long disciplineID = Long.parseLong(request.getParameter("disciplineid"));
+        String[] answerText = request.getParameterValues("answertext[]");
+        String[] checks = request.getParameterValues("checkanswer[]");
+        new QuestionDAO().updateQuestion(questionID,disciplineID,questionText,answerText,checks);
+        return "";
+    }
 
 }

@@ -7,29 +7,34 @@
     <title>Title Login Page</title>
 </head>
 <body>
-<h1>Login page</h1>
+<div style="padding-left: 30%;">
 
+    <form name="frm" action="<c:url value='login'/>" method="post">
+        <table>
+            <tr>
+                <h1>Страница входа</h1>
+                <c:if test="${param.login_error ne null}">
+                <p style="color: red;">Неправильный логин или пароль</p>
+                </c:if>
+                <td>Логин:</td>
+                <td><input type="text" name="username"></td>
+            </tr>
 
-<c:if test="${not empty param.login_error}">
-  <span style="color: red; ">
-    Your login attempt was not successful, try again.<br/><br/>
-    Reason: <c:out value="${SPRING_SECURITY_LAST_EXCEPTION.message}"/>
-  </span>
-</c:if>
+            <tr>
+                <td>Пароль:</td>
+                <td><input type="password" name="password"></td>
+            </tr>
 
-<form name="frm" action="<c:url value='login'/>" method="post">
-    <table>
-        <tr> <td>User:</td> <td><input type="text" name="username"></td></tr>
+            <tr>
+                <td colspan = "2" align="center"><input name="submit" type="submit" value="Войти">
+                    <input name="reset" type="reset" value="Отмена"></td>
+            </tr>
+        </table>
 
-        <tr><td>Password:</td> <td><input type="password" name="password"></td></tr>
-
-        <tr><td colspan="2"><input name="submit" type="submit"></td></tr>
-        <tr><td colspan="2"><input name="reset" type="reset"></td></tr>
-    </table>
-
-    <input type="hidden" name="<c:out value="${_csrf.parameterName}"/>"
-           value="<c:out value="${_csrf.token}"/>"/>
-</form>
+        <input type="hidden" name="<c:out value="${_csrf.parameterName}"/>"
+               value="<c:out value="${_csrf.token}"/>"/>
+    </form>
+</div>
 
 </body>
 

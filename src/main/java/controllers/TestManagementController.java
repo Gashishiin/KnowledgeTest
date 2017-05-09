@@ -30,10 +30,11 @@ public class TestManagementController {
     public String assignTest(WebRequest request, Model model) {
         String[] logins = request.getParameterValues("login");
         String discipline = request.getParameter("disciplineid");
-        long disciplineID = Long.parseLong(discipline);
-        System.out.println("Login " + Arrays.toString(logins));
-        System.out.println("discipline " + disciplineID);
+        String questionAmount = request.getParameter("questionamount");
         Map<String, String> properties = new HashMap<String, String>();
+        if (questionAmount!= null)
+            properties.put("questionAmount",questionAmount);
+        long disciplineID = Long.parseLong(discipline);
         new TestManagementDAO().createTestAssignments(disciplineID, logins, properties);
         return "Assignment success";
     }
@@ -110,7 +111,23 @@ public class TestManagementController {
                 }
             }
         }
+        resultScore=Math.rint(100.0*resultScore)/100.0;
         new TestManagementDAO().updateResults(assignmentID,resultScore);
         return "test";
+    }
+
+    @RequestMapping("getassignments")
+    @ResponseBody
+    public String getAssignments(WebRequest request, Model model){
+        String htmlBody="";
+        long userID = Long.parseLong(request.getParameter("userid"));
+        List<TestManagement> assignments = new TestManagementDAO().retrieveAssignmentsByUserID(userID);
+        for (TestManagement assignment :
+                assignments) {
+            htmlBody+=assignment.getDiscipline().getDisciplineName()+" "
+                    + assignment.getResultScore() + " "
+                    + (assignment.isTestDone() ? "Пройден" : "Не пройден") + "<br/>";
+        }
+        return htmlBody;
     }
 }
