@@ -16,34 +16,52 @@
         function submitresults() {
             checkform();
             var data = $("#questionform").serialize();
-            console.log("Results " + data);
             $.ajax({
                 type: "POST",
                 url: "/submitresults",
-                data: data
+                data: data,
+                success: function () {
+                    window.location.href="/test";
+                }
             })
         }
 
         function checkform() {
 
         }
+
     </script>
 </head>
 <body>
 <jsp:include page="/include"/>
 <div id="testassignment">
-    <c:forEach items="${assignmentlist}" var="assignment">
-        <a href=<c:out value="/test?id=${assignment.assignmentID}"/>>
-            <c:out value="${assignment.discipline.disciplineName}"/>
-        </a>
-    </c:forEach>
+    <c:if test="${assignedtestlist != null && !empty assignedtestlist}">
+        <form id="assignmentform" method="post" action="/test">
+            <c:forEach items="${assignedtestlist}" var="assignment" varStatus="loop" >
+                <input type="radio" name="id" value="${assignment.assignmentID}" ${loop.index == 0 ? 'checked' : ''}>
+                ${assignment.discipline.disciplineName}
+            </c:forEach>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <br/><input type="submit" value="Начать тест"/>
+        </form>
+    </c:if>
 </div>
+<div id="passedtest">
+    <c:if test="${donetestlist != null && !empty donetestlist}">
+        Пройденные тесты<br/>
+        <c:forEach items="${donetestlist}" var="donetest">
+            ${donetest.discipline.disciplineName}: ${donetest.resultScore}<br/>
+        </c:forEach>
+    </c:if>
+</div>
+
 <c:if test="${questionlist!=null && !empty questionlist}">
     <div id="testlist" style="margin-left: 400px">
         <form id="questionform" method="post" action="#">
-        <c:forEach items="${questionlist}" var="questions">
-            ${questions}
-        </c:forEach>
+            <c:forEach items="${questionlist}" var="questions">
+                ${questions}
+            </c:forEach>
+            <input type="hidden" name="assignmentid" value="${assignmentid}">
             <button type="button" onclick="submitresults()">Отправить результаты</button>
         </form>
     </div>

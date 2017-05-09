@@ -36,12 +36,13 @@ public class TestManagementDAO extends HibernateUtil {
         }
     }
 
-    public List<TestManagement> retrieveAssignmentsByLogin(String login){
+    public List<TestManagement> retrieveAssignmentsByLogin(String login, boolean isTestDone){
         try{
             Users user = new UsersDAO().retrieveUser(login);
             begin();
-            Query query = getSession().createQuery("from TestManagement where user = :user");
+            Query query = getSession().createQuery("from TestManagement where user = :user and isTestDone=:isTestDone");
             query.setParameter("user",user);
+            query.setParameter("isTestDone",isTestDone);
             List<TestManagement> assignments = query.getResultList();
             commit();
             return assignments;
@@ -65,6 +66,25 @@ public class TestManagementDAO extends HibernateUtil {
             LOG.error("Cannot retrieve assignment " + assignmentID);
             throw new HibernateException(e);
         }
+
     }
+
+    public TestManagement updateResults(long assignmentID, double score){
+        try{
+            TestManagement test = retrieveAssignmentByID(assignmentID);
+            begin();
+            test.setTestDone(true);
+            test.setResultScore(score);
+            getSession().save(test);
+            getSession().flush();
+            commit();
+            return test;
+        }catch (HibernateException e){
+            rollback();
+            LOG.error("Cannot update results for test " + assignmentID);
+            throw new HibernateException(e);
+        }
+    }
+
 
 }

@@ -16,7 +16,7 @@ import java.util.*;
 @Controller
 public class TestManagementController {
 
-    private QuestionDAO questionDAO = new QuestionDAO();
+
 
     @RequestMapping("testmanagement")
     public String testManagement(WebRequest request, Model model) {
@@ -42,8 +42,14 @@ public class TestManagementController {
     public String test(WebRequest request, Model model, Principal principal) {
         String test = request.getParameter("id");
         if (test == null) {
-            List<TestManagement> testassignmentList = new TestManagementDAO().retrieveAssignmentsByLogin(principal.getName());
-            model.addAttribute("assignmentlist", testassignmentList);
+            boolean TestIsDone = true;
+            boolean TestIsNotDone = false;
+            List<TestManagement> assignedTestList = new TestManagementDAO()
+                    .retrieveAssignmentsByLogin(principal.getName(),TestIsNotDone);
+            model.addAttribute("assignedtestlist", assignedTestList);
+            List<TestManagement> doneTestList = new TestManagementDAO()
+                    .retrieveAssignmentsByLogin(principal.getName(),TestIsDone);
+            model.addAttribute("donetestlist",doneTestList);
         } else {
             long testID = Long.parseLong(test);
             TestManagement assignment = new TestManagementDAO().retrieveAssignmentByID(testID);
@@ -68,28 +74,32 @@ public class TestManagementController {
                 questionBlockHTML += "<br/>\n";
                 questionsHTML.add(questionBlockHTML);
             }
+            model.addAttribute("assignmentid",test);
             model.addAttribute("questionlist", questionsHTML);
-            model.addAttribute("questiontype", QuestionType.values());
         }
         return "test";
     }
 
     @RequestMapping("submitresults")
-    @ResponseBody
     public String submitresults(WebRequest request, Model model) {
+        QuestionDAO questionDAO = new QuestionDAO();
         double maxScore = 100.0;
         double resultScore = 0.0;
         Map<String, String[]> results = request.getParameterMap();
-        boolean rightAnswer = false;
-        int questionAmount = results.size();
+        String assignmentParameter = "assignmentid";
+        long assignmentID = Long.parseLong(request.getParameter(assignmentParameter));
+        int questionAmount = results.size()-1;
+        System.out.println("Map results " + results );
         for (Map.Entry<String, String[]> entry : results.entrySet()) {
+            if (entry.getKey().equals(assignmentParameter)) continue;
             Question question = questionDAO.retrieveQuestion(Long.parseLong(entry.getKey()));
-            System.out.println("Q: " + question.getQuestionText());
             List<Answer> answers = questionDAO.retrieveAnswers(Long.parseLong(entry.getKey()));
+            System.out.println("Q: " + question.getQuestionText());
             List<String> resultAnswerIDs = Arrays.asList(entry.getValue());
             if (question.getQuestionType() == QuestionType.SINGLE_CHOICE
                     && questionDAO.retrieveAnswer(Long.parseLong(resultAnswerIDs.get(0))).isCorrect()) {
                 resultScore += maxScore / questionAmount;
+                System.out.println(questionDAO.retrieveAnswer(Long.parseLong(resultAnswerIDs.get(0))).getAnswerText());
             } else if (question.getQuestionType() == QuestionType.MULTI_CHOICE) {
                 for (Answer a :
                         answers) {
@@ -100,7 +110,7 @@ public class TestManagementController {
                 }
             }
         }
-        System.out.println("Result score " + resultScore);
+        new TestManagementDAO().updateResults(assignmentID,resultScore);
         return "test";
     }
 }

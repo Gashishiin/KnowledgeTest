@@ -13,6 +13,8 @@ public class TestManagement {
         this.user = user;
         this.discipline = discipline;
         this.properties = properties;
+        isTestDone = false;
+        resultScore = 0.0;
     }
 
     @Id
@@ -23,13 +25,35 @@ public class TestManagement {
     @JoinColumn(name = "userID")
     private Users user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "disciplineID")
     private Discipline discipline;
 
     @ElementCollection
     @MapKeyColumn(name="params")
     private Map<String,String> properties = new HashMap<String, String>();
+
+    @Column
+    private boolean isTestDone;
+
+    @Column
+    private double resultScore;
+
+    public boolean isTestDone() {
+        return isTestDone;
+    }
+
+    public void setTestDone(boolean testDone) {
+        isTestDone = testDone;
+    }
+
+    public double getResultScore() {
+        return resultScore;
+    }
+
+    public void setResultScore(double resultScore) {
+        this.resultScore = resultScore;
+    }
 
     public long getAssignmentID() {
         return assignmentID;

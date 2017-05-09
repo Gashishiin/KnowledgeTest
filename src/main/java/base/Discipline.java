@@ -9,7 +9,7 @@ public class Discipline {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long disciplineID;
-    @Column(nullable = false)
+    @Column
     private String disciplineName;
     @Column
     private long parentDisciplineID;
@@ -17,8 +17,8 @@ public class Discipline {
     @OneToMany(mappedBy = "discipline",cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
     private Set<Question> questionSet = new HashSet<Question>();
 
-    @OneToOne(mappedBy = "discipline",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private TestManagement assignment;
+    @OneToMany(mappedBy = "discipline",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<TestManagement> assignmentSet = new HashSet<TestManagement>();
 
     public Discipline() {
     }
