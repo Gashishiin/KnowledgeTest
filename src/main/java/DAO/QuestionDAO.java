@@ -155,6 +155,7 @@ public class QuestionDAO extends HibernateUtil {
             question.getAnswerSet().addAll(answerSet);
             System.out.println("correct answers " + correctAnswer);
             getSession().update(question);
+            getSession().flush();
             commit();
         }catch (HibernateException e){
             rollback();

@@ -76,6 +76,7 @@ public class TestManagementDAO extends HibernateUtil {
             test.setTestDone(true);
             test.setResultScore(score);
             getSession().update(test);
+            getSession().flush();
             commit();
             return test;
         }catch (HibernateException e){
