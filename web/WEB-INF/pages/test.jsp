@@ -5,8 +5,8 @@
 <head>
     <title>Title</title>
     <meta name="csrf-token" content="${_csrf.token}"/>
-    <script src="/resources/jquery/jquery-3.2.1.js"></script>
-    <script src="/resources/jquery/jquery.validate.min.js"></script>
+    <script src="${pageContext.request.contextPath}/resources/jquery/jquery-3.2.1.js"></script>
+    <script src="${pageContext.request.contextPath}/resources/jquery/jquery.validate.min.js"></script>
     <script>
         $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
             var token = $('meta[name="csrf-token"]').attr('content');

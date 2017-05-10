@@ -13,8 +13,7 @@ $(document).ready(function () {
                 url: "disciplines",
                 dataType: "json"
             }
-        },
-        "plugins" : [ "contextmenu" ]
+        }
     }).on("ready.jstree", function () {
         $("#"+DTree.treename).jstree("open_all");
     }).on('changed.jstree', function (e, data) {
@@ -42,13 +41,13 @@ function renderQuestions() {
     );
 }
 
-function createDiscipline() {
+function createDiscipline(discipline) {
     var disciplineName = prompt("Enter discipline name");
     if (disciplineName != null && disciplineName != "") {
         $.post("creatediscipline",
             {
                 disciplineName: disciplineName,
-                parentDisciplineID: DTree.id
+                parentDisciplineID: discipline
             },
             function () {
                 $.get('/questions');
@@ -71,6 +70,10 @@ function deleteDiscipline() {
 }
 
 function createQuestion() {
+    if ($("#answerbox input[type=checkbox]:checked").length == 0) {
+    alert("Должен быть отмечен минимум один ответ");
+    return;
+    }
     var str = $('#answerbox input:not([type="checkbox"])').serialize();
     var textarea = $('#answerbox textarea').serialize();
     if (str!="" && textarea!="") str +=  "&" + textarea;
@@ -113,7 +116,7 @@ function addAnswer() {
     answerid="answerid"+answercount;
     var newAnswer = document.createElement('div');
     newAnswer.innerHTML = '<div id=answerid[]">' +
-        '<input type="text" name="answertext[]">' +
+        'Вариант ответа <input type="text" name="answertext[]">' +
         '<input type="checkbox" name="checkanswer[]">' +
         '<a href="#" onclick="deleteAnswer(this)">Удалить поле</a></div>';
 
@@ -132,7 +135,7 @@ function initQuestionFormCreation() {
         '<button type="button" onclick="addAnswer()">Добавить поле для ответа</button>'+
         '<button style="margin-left: 10px" type="button" onclick="createQuestion()">Создать вопрос</button>' +
         '<div id="answerfield1">' +
-        '<input type="text" name="answertext[]"><input type="checkbox" name="checkanswer[]">'+
+        'Вариант ответа <input type="text" name="answertext[]"><input type="checkbox" name="checkanswer[]">'+
         '</div>');
 }
 

@@ -126,7 +126,7 @@ public class TestManagementController {
                 assignments) {
             htmlBody+=assignment.getDiscipline().getDisciplineName()+" "
                     + assignment.getResultScore() + " "
-                    + (assignment.isTestDone() ? "Пройден" : "Не пройден") + "<br/>";
+                    + (assignment.isTestDone() ? "Закрыт" : "Открыт") + "<br/>";
         }
         return htmlBody;
     }

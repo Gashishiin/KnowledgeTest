@@ -35,7 +35,7 @@ public class QuestionsController {
             questionsWithAnswers
                     .append("<div>")
                     .append("<button type='button' onclick='editquestion(")
-                    .append(q.getQuestionID()).append(")'>Редактировать</button>")
+                    .append(q.getQuestionID()).append(")'>Редактировать</button><br/>")
                     .append("<input type=\"checkbox\" name=\"checkboxquestion\" value=\"")
                     .append(q.getQuestionID())
                     .append("\">")
@@ -47,8 +47,8 @@ public class QuestionsController {
             for (Answer a :
                     answerList) {
                 questionsWithAnswers.append(a.isCorrect()
-                        ? "<li style=\"list-style-image: url(/resources/img/right.png)\">"
-                        : "<li style=\"list-style-image: url(/resources/img/wrong.png)\">")
+                        ? "<li style=\"list-style-image: url(${pageContext.request.contextPath}/resources/img/right.png)\">"
+                        : "<li style=\"list-style-image: url(${pageContext.request.contextPath}/resources/img/wrong.png)\">")
                         .append(a.getAnswerText()).append("</li>\n");
             }
             questionsWithAnswers.append("</div><br/>");
@@ -96,7 +96,7 @@ public class QuestionsController {
         for (Answer a :
                 answerList) {
             htmlBody+= "<div id='answerfield'" + answerFieldNum + "'>" +
-                    "<input type='text' name='answertext[]' value='" + a.getAnswerText()+ "'>" +
+                    "Вариант ответа <input type='text' name='answertext[]' value='" + a.getAnswerText()+ "'>" +
                     "<input type='checkbox' name='checkanswer[]' " + (a.isCorrect() ? "checked" : "") + ">" +
 
                     (answerFieldNum > 1 ? "<a href='#' onclick='deleteAnswer(this)'>Удалить поле</a>": "") +

@@ -3,7 +3,7 @@
 <html>
 <head>
     <title>Users</title>
-    <script src="/resources/jquery/jquery-3.2.1.js"></script>
+    <script src="${pageContext.request.contextPath}/resources/jquery/jquery-3.2.1.js"></script>
     <script>
         $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
             var token = $('meta[name="csrf-token"]').attr('content');

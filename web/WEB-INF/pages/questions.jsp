@@ -4,10 +4,10 @@
 <html>
 <head>
     <title>Questions</title>
-    <script src="/resources/jquery/jquery-3.2.1.js"></script>
-    <script src="/resources/jsTree/jstree.js"></script>
-    <link rel="stylesheet" href="/resources/jsTree/themes/default/style.css"/>
-    <script src="/resources/questions.js"></script>
+    <script src="${pageContext.request.contextPath}/resources/jquery/jquery-3.2.1.js"></script>
+    <script src="${pageContext.request.contextPath}/resources/jsTree/jstree.js"></script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/jsTree/themes/default/style.css"/>
+    <script src="${pageContext.request.contextPath}/resources/questions.js"></script>
     <meta name="csrf-token" content="${_csrf.token}"/>
 
 </head>
@@ -18,7 +18,7 @@
 <div id="buttons">
     <button onclick="createDiscipline()">Новый раздел</button>
     <button onclick="deleteDiscipline()">Удалить раздел</button>
-    <button onclick="deleteQuestions()">Удалить вопросы</button>
+
 
 </div>
 
@@ -28,7 +28,9 @@
         <form id="answerbox" method="post" action="#">
             <div id="input_fields_wrap"></div>
         </form>
+        <p><button onclick="deleteQuestions()">Удалить вопросы</button></p>
         <form id="questionlistform">
+
         <div id="question_list"></div>
         </form>
     </div>

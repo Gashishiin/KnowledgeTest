@@ -4,9 +4,9 @@
 <html>
 <head>
     <title>Назначение тестов и результаты</title>
-    <script src="/resources/jquery/jquery-3.2.1.js"></script>
-    <script src="/resources/jsTree/jstree.js"></script>
-    <link rel="stylesheet" href="/resources/jsTree/themes/default/style.css"/>
+    <script src="${pageContext.request.contextPath}/resources/jquery/jquery-3.2.1.js"></script>
+    <script src="${pageContext.request.contextPath}/resources/jsTree/jstree.js"></script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/jsTree/themes/default/style.css"/>
     <script>
         $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
             var token = $('meta[name="csrf-token"]').attr('content');
@@ -74,7 +74,7 @@
     <form id="testassignment" method="post" action="#">
     
         <p><button type="button" onclick="assigntest()">Назначить тест</button>
-            Количество вопросов <input type="number" min="1" max="100" size="2" name="questionamount">
+            Количество вопросов <input type="number" min="1" max="100" value="20" size="2" required name="questionamount">
             </p>
         <c:forEach items="${userlist}" var="users">
             <button type="button" onclick="showassignments(${users.userID})">Назначенные тесты</button>
