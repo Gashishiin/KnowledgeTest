@@ -18,7 +18,7 @@
             var data = $("#questionform").serialize();
             $.ajax({
                 type: "POST",
-                url: "/submitresults",
+                url: "submitresults",
                 data: data,
                 success: function () {
                     window.location.href = "/test";
@@ -33,15 +33,16 @@
     </script>
 </head>
 <body>
-<jsp:include page="/include"/>
+<jsp:include page="include"/>
 <div id="testassignment">
     <c:choose>
         <c:when test="${assignedtestlist != null && !empty assignedtestlist}">
-            <form id="assignmentform" method="post" action="/test">
+            Назначенные тесты<br/>
+            <form id="assignmentform" method="post" action="test">
                 <c:forEach items="${assignedtestlist}" var="assignment" varStatus="loop">
                     <input type="radio" name="id"
                            value="${assignment.assignmentID}" ${loop.index == 0 ? 'checked' : ''}>
-                    ${assignment.discipline.disciplineName}
+                    ${assignment.discipline.disciplineName}<br/>
                 </c:forEach>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <br/><input type="submit" value="Начать тест"/>

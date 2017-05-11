@@ -13,16 +13,12 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Controller
 public class UserController {
-    private final String NOTHING_DELETE = "Нет выбранных для удаления пользователей";
     private final String ALREADY_EXISTS = "Пользователь %s уже существует";
     private final String EMPTY_FIELDS = "Не все поля заполнены";
     private final String DIFFERENT_PASSWORDS = "Введенный пароль и пароль для подтверждения не совпадают";
@@ -30,17 +26,12 @@ public class UserController {
     private final String WRONG_CHARACTERS_USER_LOGIN =
             "Минимальная длина логина 3 символа, допустимы буквы латиницы, цифры, точка, тире и подчеркивание";
     private final String EMPTY_FULLNAME_FIELD = "Не заполнено поле \"Полное имя\"";
+    private final String CAN_NOT_DELETE_YOURSELF = "Пользователь не может удалить себя";
+    private final String CAN_NOT_UPDATE_OWN_ROLE = "Пользователь не может изменить собственную роль";
     @RequestMapping("users")
     public String getUsers(WebRequest request, Model model) {
         List<Users> usersList = new UsersDAO().retrieveAllUsers();
         model.addAttribute("userlist", usersList);
-        String nothingDelete = request.getParameter(NOTHING_DELETE);
-        if (nothingDelete != null) model.addAttribute(NOTHING_DELETE, "No users to delete");
-        String userExists = request.getParameter(ALREADY_EXISTS);
-        if (userExists != null) model.addAttribute(ALREADY_EXISTS, "User " + userExists + " already exists");
-        for (Users u :
-                usersList) {
-        }
         return "users";
     }
 
@@ -95,12 +86,13 @@ public class UserController {
 
 
     @RequestMapping(value = "deleteusers")
-    public String deleteUsers(WebRequest request, Model model) {
+    public String deleteUsers(WebRequest request, RedirectAttributes attributes) {
         String userLogins[] = request.getParameterValues("login");
-        if (userLogins == null) {
-            model.addAttribute(NOTHING_DELETE, "true");
-        } else {
-            new UsersDAO().deleteUsers(userLogins);
+        String currentLoggedUser = request.getUserPrincipal().getName();
+        if (userLogins != null) {
+            if (Arrays.asList(userLogins).contains(currentLoggedUser))
+                attributes.addFlashAttribute("errormessagelist", Arrays.asList(CAN_NOT_DELETE_YOURSELF));
+            else new UsersDAO().deleteUsers(userLogins);
         }
         return "redirect:users";
     }
@@ -113,11 +105,14 @@ public class UserController {
         String fullname = request.getParameter("fullname");
         String userrole = request.getParameter("role").toUpperCase();
         long userID = Long.parseLong(request.getParameter("userid"));
+        String currentRole = (new UsersDAO().retrieveUser(request.getUserPrincipal().getName()).getUserRole().toString());
         params.put("password",password);
         params.put("password2",password2);
         params.put("fullname",fullname);
         params.put("userrole",userrole);
         List<String> errorMessageList = validateExistUserForm(params);
+        if (!currentRole.equalsIgnoreCase(userrole))
+            errorMessageList.add(CAN_NOT_UPDATE_OWN_ROLE);
         if (errorMessageList.size() == 0){
             new UsersDAO().updateUser(userID,params);
         }else

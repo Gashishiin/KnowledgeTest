@@ -2,9 +2,7 @@ package DAO;
 
 import base.UserRole;
 import base.Users;
-import exceptions.UserDuplicatesException;
 import org.hibernate.HibernateException;
-import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

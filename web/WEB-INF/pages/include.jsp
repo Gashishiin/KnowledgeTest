@@ -3,6 +3,6 @@
 <div style="float: right">
 <a href="${pageContext.request.contextPath}/">Go home</a>
 <br/>Вы вошли как ${fullname}
-<br/><a href="/logout">Выйти</a>
+<br/><a href="${pageContext.request.contextPath}/logout">Выйти</a>
 </div>
 <br/>

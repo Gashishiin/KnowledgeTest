@@ -9,7 +9,7 @@
 	http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <http realm="JavaStudy example" use-expressions="false" auto-config="true">
-        <intercept-url pattern="/" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <intercept-url pattern="/" access="ROLE_ADMIN"/>
         <intercept-url pattern="/questions" access="ROLE_METHODIST, ROLE_ADMIN"/>
         <intercept-url pattern="/users" access="ROLE_ADMIN"/>
         <intercept-url pattern="/createuser" access="ROLE_ADMIN"/>

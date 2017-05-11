@@ -19,7 +19,7 @@
                 'core': {
                     'data': {
                         type: "POST",
-                        url: "/disciplines",
+                        url: "disciplines",
                         dataType: "json"
                     }
                 }

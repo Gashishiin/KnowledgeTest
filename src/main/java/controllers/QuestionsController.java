@@ -3,6 +3,7 @@ package controllers;
 import DAO.QuestionDAO;
 import base.Answer;
 import base.Question;
+import org.apache.taglibs.standard.lang.jstl.test.PageContextImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +31,7 @@ public class QuestionsController {
         questionList = new QuestionDAO().retrieveQuestionByDiscipline(disciplineID);
         List<Answer> answerList;
         Question q;
+        String contextPath = request.getContextPath();
         for (int i = 0; i < questionList.size();i++) {
             q = questionList.get(i);
             questionsWithAnswers
@@ -47,8 +49,8 @@ public class QuestionsController {
             for (Answer a :
                     answerList) {
                 questionsWithAnswers.append(a.isCorrect()
-                        ? "<li style=\"list-style-image: url(${pageContext.request.contextPath}/resources/img/right.png)\">"
-                        : "<li style=\"list-style-image: url(${pageContext.request.contextPath}/resources/img/wrong.png)\">")
+                        ? "<li style=\"list-style-image: url(" + contextPath + "/resources/img/right.png)\">"
+                        : "<li style=\"list-style-image: url(" + contextPath + "/resources/img/wrong.png)\">")
                         .append(a.getAnswerText()).append("</li>\n");
             }
             questionsWithAnswers.append("</div><br/>");

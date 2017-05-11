@@ -57,7 +57,15 @@ function createDiscipline(discipline) {
     }
 }
 function deleteDiscipline() {
-    if (window.confirm("Are sure to delete discipline " + DTree.name + "?")) {
+    var selected = $("#discipline_tree").jstree("get_selected");
+    var dom = $("#discipline_tree").jstree(true).get_children_dom(selected);
+    if (selected == 0){
+        alert('Невозможно удалить раздел "Top"');
+        return;
+    } else if (dom.length != 0){
+        alert('Невозможно удалить раздел ' + DTree.name + ', так как он содержит подразделы');
+        return;
+    } else if (window.confirm("Are sure to delete discipline " + DTree.name + "?")) {
         $.ajax({
             type: "POST",
             url: "deletediscipline",

@@ -34,16 +34,16 @@ public class TestManagement {
     private Map<String,String> properties = new HashMap<String, String>();
 
     @Column
-    private boolean isTestDone;
+    private Boolean isTestDone;
 
     @Column
     private double resultScore;
 
-    public boolean isTestDone() {
+    public Boolean isTestDone() {
         return isTestDone;
     }
 
-    public void setTestDone(boolean testDone) {
+    public void setTestDone(Boolean testDone) {
         isTestDone = testDone;
     }
 

@@ -20,8 +20,6 @@ import java.util.Map;
 @Service("loginService")
 public class LoginService implements UserDetailsService {
 
-
-
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 

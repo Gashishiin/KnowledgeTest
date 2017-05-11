@@ -78,6 +78,7 @@
         <!-- https://mvnrepository.com/artifact/org.webjars/jstree -->
         </dependencies>
     <build>
+        <finalName>knowledgetest</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
