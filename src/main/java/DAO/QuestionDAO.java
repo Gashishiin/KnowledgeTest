@@ -28,14 +28,12 @@ public class QuestionDAO extends HibernateUtil {
                 if (isCorrect) correctAnswer++;
                 answerSet.add(new Answer(question,answerTexts[i],isCorrect));
             }
-            if (correctAnswer == 1) {
-                question.setQuestionType(QuestionType.SINGLE_CHOICE);
-            }
-            else if (correctAnswer == 0){
-                question.setQuestionType(QuestionType.FREE);
-            }
-            else {
+            if (correctAnswer > 1) {
                 question.setQuestionType(QuestionType.MULTI_CHOICE);
+            }
+            else if (correctAnswer == 1){
+                if (answerSet.size() > 1) question.setQuestionType(QuestionType.SINGLE_CHOICE);
+                else question.setQuestionType(QuestionType.FREE);
             }
             question.setAnswerSet(answerSet);
             getSession().save(question);
@@ -64,7 +62,7 @@ public class QuestionDAO extends HibernateUtil {
     }
 
     public List<Question> retrieveQuestionByDiscipline(long disciplineID){
-        List<Question> questionList = new ArrayList<Question>();
+        List<Question> questionList;
         try{
             begin();
             Query query = getSession().createQuery("from Question where discipline.disciplineID = :disciplineID");
@@ -74,7 +72,7 @@ public class QuestionDAO extends HibernateUtil {
             return questionList;
         }catch (HibernateException e){
             rollback();
-            LOG.error("Cannot retieve questions by discipline " + disciplineID);
+            LOG.error("Cannot retrieve questions by discipline " + disciplineID);
             throw new HibernateException(e);
         }
     }
@@ -141,19 +139,16 @@ public class QuestionDAO extends HibernateUtil {
                 if (isCorrect) correctAnswer++;
                 answerSet.add(new Answer(question,answerTexts[i],isCorrect));
             }
-            if (correctAnswer == 1) {
-                question.setQuestionType(QuestionType.SINGLE_CHOICE);
-            }
-            else if (correctAnswer == 0){
-                question.setQuestionType(QuestionType.FREE);
-            }
-            else {
+            if (correctAnswer > 1) {
                 question.setQuestionType(QuestionType.MULTI_CHOICE);
+            }
+            else if (correctAnswer == 1){
+                if (answerSet.size() > 1) question.setQuestionType(QuestionType.SINGLE_CHOICE);
+                else question.setQuestionType(QuestionType.FREE);
             }
             question.setQuestionText(questionText);
             question.getAnswerSet().clear();
             question.getAnswerSet().addAll(answerSet);
-            System.out.println("correct answers " + correctAnswer);
             getSession().update(question);
             getSession().flush();
             commit();

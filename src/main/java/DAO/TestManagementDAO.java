@@ -20,7 +20,7 @@ public class TestManagementDAO extends HibernateUtil {
             begin();
             TestManagement testManagement;
             List<TestManagement> testManagementList = new ArrayList<TestManagement>();
-            properties.put("Date",new Date().toString());
+            properties.put("Date", new Date().toString());
             for (Users user :
                     usersList) {
                 testManagement = new TestManagement(user, discipline, properties);
@@ -36,32 +36,37 @@ public class TestManagementDAO extends HibernateUtil {
         }
     }
 
-    public List<TestManagement> retrieveAssignmentsByLogin(String login, boolean isTestDone){
-        try{
+    public List<TestManagement> retrieveAssignmentsByLogin(String login, Boolean isTestDone) {
+        try {
             Users user = new UsersDAO().retrieveUser(login);
             begin();
-            Query query = getSession().createQuery("from TestManagement where user = :user and isTestDone=:isTestDone");
-            query.setParameter("user",user);
-            query.setParameter("isTestDone",isTestDone);
+            Query query;
+            if (isTestDone == null)
+                query = getSession().createQuery("from TestManagement where user = :user and isTestDone is null ");
+            else {
+                query = getSession().createQuery("from TestManagement where user = :user and isTestDone=:isTestDone");
+                query.setParameter("isTestDone", isTestDone);
+            }
+            query.setParameter("user", user);
             List<TestManagement> assignments = query.getResultList();
             commit();
             return assignments;
-        }catch (HibernateException e){
+        } catch (HibernateException e) {
             rollback();
-            LOG.error("Cannot retrieve assignments for" + login );
+            LOG.error("Cannot retrieve assignments for" + login);
             throw new HibernateException(e);
         }
     }
 
-    public TestManagement retrieveAssignmentByID(long assignmentID){
-        try{
+    public TestManagement retrieveAssignmentByID(long assignmentID) {
+        try {
             begin();
             Query query = getSession().createQuery("from TestManagement where assignmentID = :assignmentID");
-            query.setParameter("assignmentID",assignmentID);
-            TestManagement testManagement = (TestManagement)query.uniqueResult();
+            query.setParameter("assignmentID", assignmentID);
+            TestManagement testManagement = (TestManagement) query.uniqueResult();
             commit();
             return testManagement;
-        }catch (HibernateException e){
+        } catch (HibernateException e) {
             rollback();
             LOG.error("Cannot retrieve assignment " + assignmentID);
             throw new HibernateException(e);
@@ -69,35 +74,49 @@ public class TestManagementDAO extends HibernateUtil {
 
     }
 
-    public TestManagement updateResults(long assignmentID, double score){
-        try{
+    public TestManagement updateResults(long assignmentID, double score, Boolean isTestDone) {
+        try {
             TestManagement test = retrieveAssignmentByID(assignmentID);
             begin();
-            test.setTestDone(true);
+            test.setTestDone(isTestDone);
             test.setResultScore(score);
+            test.getProperties().put("Date", new Date().toString());
             getSession().update(test);
             getSession().flush();
             commit();
             return test;
-        }catch (HibernateException e){
+        } catch (HibernateException e) {
             rollback();
             LOG.error("Cannot update results for test " + assignmentID);
             throw new HibernateException(e);
         }
     }
 
-    public List<TestManagement> retrieveAssignmentsByUserID(long userID){
-        try{
-            Users user = new UsersDAO().retrieveUserByID(userID);
+    public List<TestManagement> retrieveAssignmentsByUserID(long userID) {
+        try {
             begin();
             Query query = getSession().createQuery("from TestManagement where user.userID = :userID");
-            query.setParameter("userID",userID);
+            query.setParameter("userID", userID);
             List<TestManagement> assignments = query.getResultList();
             commit();
             return assignments;
-        }catch (HibernateException e){
+        } catch (HibernateException e) {
             rollback();
             LOG.error("Cannot retrieve assignments for" + userID);
+            throw new HibernateException(e);
+        }
+    }
+
+    public String deleteAssignment(long assignmentID){
+        try{
+            begin();
+            TestManagement assignment = retrieveAssignmentByID(assignmentID);
+            getSession().delete(assignment);
+            commit();
+            return "Deleted" + assignmentID;
+        }catch (HibernateException e){
+            rollback();
+            LOG.error("Cannot delete assignment " + assignmentID);
             throw new HibernateException(e);
         }
     }

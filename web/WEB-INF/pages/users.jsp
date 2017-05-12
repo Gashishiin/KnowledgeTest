@@ -13,8 +13,8 @@
             $.ajax({
                 type: "POST",
                 url: "getuser",
-                data: "userid="+id,
-                success:function (data) {
+                data: "userid=" + id,
+                success: function (data) {
                     $("#userform").html(data);
                 }
 
@@ -56,14 +56,21 @@
 </div>
 <div id="existingusers" style="margin-left: 200px">
     <form action="deleteusers" method="POST">
-        <div>
+        <table>
             <c:forEach items="${userlist}" var="users">
-                <button type="button" onclick="edituser(${users.userID})">Редактировать</button>
-                <input type="checkbox" name="login" value=${users.login}>
-                ${users.fullname} (${users.login}) ${users.userRole} <br/>
+                <tr>
+                    <td><button type="button" onclick="edituser(${users.userID})">Редактировать</button></td>
+                    <td><input type="checkbox" name="login" value=${users.login}>${users.fullname}</td>
+                    <td> ${users.login}</td>
+                    <td>
+                        <c:if test="${users.userRole eq 'ROLE_ADMIN'}">Администратор</c:if>
+                        <c:if test="${users.userRole eq 'ROLE_METHODIST'}">Методист</c:if>
+                        <c:if test="${users.userRole eq 'ROLE_STUDENT'}">Студент</c:if>
+                    </td>
+                </tr>
             </c:forEach>
             <p><input type="submit" value="Удалить пользователей"></p>
-        </div>
+        </table>
         <input type="hidden" name="<c:out value="${_csrf.parameterName}"/>"
                value="<c:out value="${_csrf.token}"/>"/>
     </form>

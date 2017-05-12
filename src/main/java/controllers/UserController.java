@@ -105,13 +105,14 @@ public class UserController {
         String fullname = request.getParameter("fullname");
         String userrole = request.getParameter("role").toUpperCase();
         long userID = Long.parseLong(request.getParameter("userid"));
-        String currentRole = (new UsersDAO().retrieveUser(request.getUserPrincipal().getName()).getUserRole().toString());
+        Users currentUser = new UsersDAO().retrieveUser(request.getUserPrincipal().getName());
+        String currentRole = currentUser.getUserRole().toString();
         params.put("password",password);
         params.put("password2",password2);
         params.put("fullname",fullname);
         params.put("userrole",userrole);
         List<String> errorMessageList = validateExistUserForm(params);
-        if (!currentRole.equalsIgnoreCase(userrole))
+        if (!currentRole.equalsIgnoreCase(userrole) && currentUser.getUserID() == userID)
             errorMessageList.add(CAN_NOT_UPDATE_OWN_ROLE);
         if (errorMessageList.size() == 0){
             new UsersDAO().updateUser(userID,params);

@@ -14,7 +14,10 @@
         });
 
         function submitresults() {
-            checkform();
+            if (!checkform()) {
+                alert("Бланк ответов заполнен не полностью");
+                return;
+            }
             var data = $("#questionform").serialize();
             $.ajax({
                 type: "POST",
@@ -27,13 +30,47 @@
         }
 
         function checkform() {
+            var flags = document.querySelectorAll('[name="questionm"],[name="questions"]');
+            var arr = [];
+            var stopexec = false;
 
+            $.each(flags, function () {
+                if (stopexec) return;
+                arr = [];
+                $.each(this.getElementsByTagName("input"), function () {
+                    if (this.checked) arr.push(this.checked);
+                });
+                if (arr.length == 0) {
+                    stopexec = true;
+                    return;
+                }
+            });
+            if (stopexec) return false;
+            $("#questionform input[type=text]").each(function () {
+                var fieldvalue = $.trim(this.value);
+                if (fieldvalue.length == 0) {
+                    stopexec = true;
+                    return;
+                }
+            });
+            return !stopexec;
         }
+
+        function issuccess(thresholdstring, score, isDone) {
+            var threshold = parseFloat(thresholdstring);
+            console.log("Threshold " + threshold + " " + score);
+            if (isDone) {
+                if (score >= threshold) return "Успешно";
+                else return "Неуспешно";
+            } else
+                return "";
+        }
+
 
     </script>
 </head>
 <body>
-<jsp:include page="include"/>
+<jsp:include page="/include"/>
 <div id="testassignment">
     <c:choose>
         <c:when test="${assignedtestlist != null && !empty assignedtestlist}">
@@ -56,10 +93,25 @@
 <div id="passedtest">
     <c:choose>
         <c:when test="${donetestlist != null && !empty donetestlist}">
-            Пройденные тесты<br/>
-            <c:forEach items="${donetestlist}" var="donetest">
-                ${donetest.discipline.disciplineName}: ${donetest.resultScore}<br/>
-            </c:forEach>
+            Пройденные тесты
+            <table>
+                <c:forEach items="${donetestlist}" var="donetest">
+                    <tr>
+                        <td>${donetest.discipline.disciplineName}</td>
+                        <td>${donetest.resultScore}</td>
+                        <td>
+                            <script>
+                                document.write(
+                                    issuccess(
+                                        ${donetest.properties.get("threshold")},
+                                        ${donetest.resultScore},
+                                    ${donetest.isTestDone()}))
+                            </script>
+                        </td>
+                        <td>${donetest.properties.get("Date")}</td>
+                    </tr>
+                </c:forEach>
+            </table>
         </c:when>
         <c:otherwise>
             Пройденных тестов нет
