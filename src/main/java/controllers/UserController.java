@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -28,6 +29,7 @@ public class UserController {
     private final String EMPTY_FULLNAME_FIELD = "Не заполнено поле \"Полное имя\"";
     private final String CAN_NOT_DELETE_YOURSELF = "Пользователь не может удалить себя";
     private final String CAN_NOT_UPDATE_OWN_ROLE = "Пользователь не может изменить собственную роль";
+    private final String CAN_NOT_CHANGE_USER_ADMIN = "Невозможно изменить роль или удалить пользователя \"admin\"";
     @RequestMapping("users")
     public String getUsers(WebRequest request, Model model) {
         List<Users> usersList = new UsersDAO().retrieveAllUsers();
@@ -89,10 +91,15 @@ public class UserController {
     public String deleteUsers(WebRequest request, RedirectAttributes attributes) {
         String userLogins[] = request.getParameterValues("login");
         String currentLoggedUser = request.getUserPrincipal().getName();
+        List<String> errorMessageList = new ArrayList<String>();
         if (userLogins != null) {
+            if (Arrays.asList(userLogins).contains("admin"))
+                errorMessageList.add(CAN_NOT_CHANGE_USER_ADMIN);
             if (Arrays.asList(userLogins).contains(currentLoggedUser))
-                attributes.addFlashAttribute("errormessagelist", Collections.singletonList(CAN_NOT_DELETE_YOURSELF));
-            else new UsersDAO().deleteUsers(userLogins);
+                errorMessageList.add(CAN_NOT_DELETE_YOURSELF);
+                attributes.addFlashAttribute("errormessagelist",errorMessageList);
+            if (errorMessageList.size() == 0)
+             new UsersDAO().deleteUsers(userLogins);
         }
         return "redirect:users";
     }
@@ -100,6 +107,7 @@ public class UserController {
     @RequestMapping(value = "updateuser")
     public String updateUser(WebRequest request, RedirectAttributes attributes){
         Map<String,String> params = new HashMap<String, String>();
+        String login = request.getParameter("login");
         String password = request.getParameter("password");
         String password2 = request.getParameter("password2");
         String fullname = request.getParameter("fullname");
@@ -114,6 +122,8 @@ public class UserController {
         List<String> errorMessageList = validateExistUserForm(params);
         if (!currentRole.equalsIgnoreCase(userrole) && currentUser.getUserID() == userID)
             errorMessageList.add(CAN_NOT_UPDATE_OWN_ROLE);
+        if (login.equals("admin") && UserRole.valueOf(userrole)!=UserRole.ROLE_ADMIN)
+            errorMessageList.add(CAN_NOT_CHANGE_USER_ADMIN);
         if (errorMessageList.size() == 0){
             new UsersDAO().updateUser(userID,params);
         }else
@@ -154,5 +164,14 @@ public class UserController {
         if (!matcher.matches())
             errorMessageList.add(WRONG_CHARACTERS_USER_LOGIN);
         return errorMessageList;
+    }
+
+    @PostConstruct
+    public Users checkAdminExist(){
+        UsersDAO usersDAO = new UsersDAO();
+        Users user = usersDAO.retrieveUser("admin");
+        if (user == null)
+            usersDAO.createUser("admin","123456","Администратор", UserRole.ROLE_ADMIN);
+        return user;
     }
 }

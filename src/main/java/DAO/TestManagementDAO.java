@@ -59,12 +59,8 @@ public class TestManagementDAO extends HibernateUtil {
 
     public TestManagement retrieveAssignmentByID(long assignmentID) {
         try {
-            begin();
-            Query query = getSession().createQuery("from TestManagement where assignmentID = :assignmentID");
-            query.setParameter("assignmentID", assignmentID);
-            TestManagement testManagement = (TestManagement) query.uniqueResult();
-            commit();
-            return testManagement;
+
+            return getSession().get(TestManagement.class,assignmentID);
         } catch (HibernateException e) {
             rollback();
             LOG.error("Cannot retrieve assignment " + assignmentID);
@@ -81,7 +77,6 @@ public class TestManagementDAO extends HibernateUtil {
             test.setResultScore(score);
             test.getProperties().put("Date", new Date().toString());
             getSession().update(test);
-            getSession().flush();
             commit();
             return test;
         } catch (HibernateException e) {
@@ -97,6 +92,10 @@ public class TestManagementDAO extends HibernateUtil {
             Query query = getSession().createQuery("from TestManagement where user.userID = :userID");
             query.setParameter("userID", userID);
             List<TestManagement> assignments = query.getResultList();
+            for (TestManagement test :
+                    assignments) {
+                getSession().refresh(test);
+            }
             commit();
             return assignments;
         } catch (HibernateException e) {

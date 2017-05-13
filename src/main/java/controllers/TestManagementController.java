@@ -56,7 +56,6 @@ public class TestManagementController {
             assignedTestList.addAll(new TestManagementDAO()
                     .retrieveAssignmentsByLogin(principal.getName(), null));
             model.addAttribute("assignedtestlist", assignedTestList);
-            System.out.println("assigned list" + assignedTestList);
             List<TestManagement> doneTestList = new TestManagementDAO()
                     .retrieveAssignmentsByLogin(principal.getName(), TestIsDone);
             model.addAttribute("donetestlist", doneTestList);
@@ -163,6 +162,7 @@ public class TestManagementController {
         String success;
         double threshold;
         String thresholdString;
+        System.out.println("assignments " + assignments);
         for (TestManagement assignment :
                 assignments) {
             success = "";
@@ -191,7 +191,7 @@ public class TestManagementController {
             }
 
             thresholdString = assignment.getProperties().get("threshold");
-            if (assignment.isTestDone() && thresholdString != null) {
+            if (assignment.isTestDone()!=null && assignment.isTestDone() && thresholdString != null) {
                 threshold = Double.parseDouble(thresholdString);
                 if (assignment.getResultScore() >= threshold) success = "Успешно";
                 else success = "Неуспешно";
@@ -211,7 +211,9 @@ public class TestManagementController {
         long assignmentID;
         if (assignmentIDString != null) {
             assignmentID = Long.parseLong(assignmentIDString);
-            if (new TestManagementDAO().retrieveAssignmentByID(assignmentID).isTestDone() != null)
+            TestManagement assignment = new TestManagementDAO().retrieveAssignmentByID(assignmentID);
+            System.out.println("Assignment isTestDone " + assignment.isTestDone());
+            if (assignment.isTestDone() != null)
                 new TestManagementDAO().deleteAssignment(assignmentID);
         }
         return "";
