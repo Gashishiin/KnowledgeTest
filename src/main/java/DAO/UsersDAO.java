@@ -118,8 +118,8 @@ public class UsersDAO extends HibernateUtil {
 
     public Users updateUser(long userID, Map<String, String> params) {
         try {
-            Users user = retrieveUserByID(userID);
             begin();
+            Users user = getSession().load(Users.class, userID);
             user.setFullname(params.get("fullname"));
             String password = params.get("password");
             String password2 = params.get("password2");

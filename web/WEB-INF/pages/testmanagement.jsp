@@ -64,13 +64,24 @@
             })
         }
 
-        function cancel(id) {
+        function canceltest(testid,userid) {
             $.ajax({
                 type: "POST",
                 url: "deleteassignment",
-                date: "assignmentid="+id,
+                data: "assignmentid="+testid,
                 success: function () {
-                    showassignments(id);
+                    showassignments(userid);
+                }
+            })
+        }
+
+        function repeattest(testid,userid) {
+            $.ajax({
+                type: "POST",
+                url: "repeatassignment",
+                data: "assignmentid="+testid,
+                success: function () {
+                    showassignments(userid)
                 }
             })
         }

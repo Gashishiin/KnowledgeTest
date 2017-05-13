@@ -22,6 +22,8 @@
         <intercept-url pattern="/disciplines" access="ROLE_METHODIST, ROLE_ADMIN"/>
         <intercept-url pattern="/assigntest" access="ROLE_ADMIN, ROLE_METHODIST"/>
         <intercept-url pattern="/getassignments" access="ROLE_ADMIN, ROLE_METHODIST"/>
+        <intercept-url pattern="/deleteassignment" access="ROLE_ADMIN, ROLE_METHODIST"/>
+        <intercept-url pattern="/repeatassignment" access="ROLE_ADMIN, ROLE_METHODIST"/>
         <intercept-url pattern="/test" access="ROLE_METHODIST, ROLE_ADMIN, ROLE_STUDENT"/>
         <intercept-url pattern="/submitresults" access="ROLE_ADMIN,ROLE_METHODIST,ROLE_STUDENT"/>
         <intercept-url pattern="/include" access="IS_AUTHENTICATED_ANONYMOUSLY"/>

@@ -17,6 +17,8 @@ public class TestManagement {
         resultScore = 0.0;
     }
 
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long assignmentID;
@@ -40,6 +42,10 @@ public class TestManagement {
     private double resultScore;
 
     public Boolean isTestDone() {
+        return isTestDone;
+    }
+
+    public Boolean getTestDone() {
         return isTestDone;
     }
 

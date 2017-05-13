@@ -12,8 +12,7 @@ import java.util.List;
 public class DisciplineDAO extends HibernateUtil {
     private static final Logger LOG = LoggerFactory.getLogger(DisciplineDAO.class);
 
-    public Discipline createDiscipline(String disciplineName, long parentDisciplineID)
-            throws HibernateException {
+    public Discipline createDiscipline(String disciplineName, long parentDisciplineID){
         try {
             begin();
             Discipline discipline = new Discipline(disciplineName, parentDisciplineID);
@@ -59,12 +58,10 @@ public class DisciplineDAO extends HibernateUtil {
 
     public String deleteDiscipline(long disciplineID){
         try{
-            Discipline discipline = retrieveDiscipline(disciplineID);
             begin();
-            getSession().delete(discipline);
+            getSession().delete(getSession().load(Discipline.class,disciplineID));
             commit();
-            System.out.println("DAO deleting discipline " + discipline.getDisciplineName());
-            return discipline.getDisciplineName();
+            return String.valueOf(disciplineID);
         }catch (HibernateException e){
             rollback();
             LOG.error("Cannot delete discipline " + disciplineID);

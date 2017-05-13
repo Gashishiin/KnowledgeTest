@@ -67,10 +67,10 @@ public class TestManagementController {
             List<Question> questionList = new QuestionDAO().retrieveQuestionByDiscipline(assignment.getDiscipline().getDisciplineID());
             Collections.shuffle(questionList);
             String questionAmountString = assignment.getProperties().get("questionAmount");
-            if (questionAmountString != null){
+            if (questionAmountString != null) {
                 int questionAmount = Integer.parseInt(questionAmountString);
-                if (questionList.size() > questionAmount);
-                questionList = questionList.subList(0,questionAmount);
+                if (questionList.size() > questionAmount) ;
+                questionList = questionList.subList(0, questionAmount);
             }
             List<String> questionsHTML = new ArrayList<String>();
             for (Question q :
@@ -184,19 +184,21 @@ public class TestManagementController {
                 repeatOrCancelButton = "";
             } else if (isTestDone) {
                 status = "Закрыт";
-                repeatOrCancelButton = "<button type='button' onclick='repeat("
-                        + assignment.getAssignmentID() + ")'>Повторить</button>";
+                repeatOrCancelButton = "<button type='button' onclick='repeattest("
+                        + assignment.getAssignmentID() + "," +
+                        + assignment.getUser().getUserID() + ")'>Повторить</button>";
             } else {
                 status = "Открыт";
-                repeatOrCancelButton = "<button type='button' onclick='cancel("
-                        + assignment.getAssignmentID() + ")'>Отменить</button>";
+                repeatOrCancelButton = "<button type='button' onclick='canceltest("
+                        + assignment.getAssignmentID() + "," +
+                        + assignment.getUser().getUserID() + ")'>Отменить</button>";
             }
 
             thresholdString = assignment.getProperties().get("threshold");
-            if (assignment.isTestDone() && thresholdString!=null){
+            if (assignment.isTestDone() && thresholdString != null) {
                 threshold = Double.parseDouble(thresholdString);
                 if (assignment.getResultScore() >= threshold) success = "Успешно";
-                else success="Неуспешно";
+                else success = "Неуспешно";
             }
 
             htmlBody += "<tr><td>" + assignment.getDiscipline().getDisciplineName() + "</td>\n<td>"
@@ -213,12 +215,26 @@ public class TestManagementController {
 
     @RequestMapping("deleteassignment")
     @ResponseBody
-    public String deleteAssignment(WebRequest request, Model model){
+    public String deleteAssignment(WebRequest request, Model model) {
         String assignmentIDString = request.getParameter("assignmentid");
-        if (assignmentIDString != null){
-            new TestManagementDAO().deleteAssignment(Long.parseLong(assignmentIDString));
+        long assignmentID;
+        if (assignmentIDString != null) {
+            assignmentID = Long.parseLong(assignmentIDString);
+            if (new TestManagementDAO().retrieveAssignmentByID(assignmentID).isTestDone() != null)
+                new TestManagementDAO().deleteAssignment(assignmentID);
         }
         return "";
     }
 
+    @RequestMapping("repeatassignment")
+    @ResponseBody
+    public String repeatAssignment(WebRequest request) {
+        long assignmentID = Long.parseLong(request.getParameter("assignmentid"));
+        TestManagement assignment = new TestManagementDAO().retrieveAssignmentByID(assignmentID);
+        long disciplineID = assignment.getDiscipline().getDisciplineID();
+        String[] logins = {assignment.getUser().getLogin()};
+        Map<String,String> properties = new HashMap<String, String>(assignment.getProperties());
+        List<TestManagement> assignments = new TestManagementDAO().createTestAssignments(disciplineID,logins,properties);
+        return assignments.get(0).getDiscipline().getDisciplineName() + " " + assignments.get(0).getAssignmentID();
+    }
 }

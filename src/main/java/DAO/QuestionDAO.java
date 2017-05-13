@@ -17,8 +17,9 @@ public class QuestionDAO extends HibernateUtil {
 
     public Question createQuestion(long disciplineID, String questionText, String[] answerTexts, String[] checks){
         try{
-            Discipline discipline = new DisciplineDAO().retrieveDiscipline(disciplineID);
+
             begin();
+            Discipline discipline = getSession().load(Discipline.class, disciplineID);
             Question question = new Question(discipline,questionText);
             Set<Answer> answerSet = new HashSet<Answer>();
             int correctAnswer = 0;
@@ -109,12 +110,12 @@ public class QuestionDAO extends HibernateUtil {
     
     public void deleteQuestions(long[] questionIDs){
         try{
+            begin();
             List<Question> questions = new ArrayList<Question>();
             for (long id :
                     questionIDs) {
-                    questions.add(retrieveQuestion(id));
+                questions.add(getSession().load(Question.class, id));
             }
-            begin();
             for (Question q :
                     questions) {
                 getSession().delete(q);
@@ -127,10 +128,10 @@ public class QuestionDAO extends HibernateUtil {
         }
     }
 
-    public void updateQuestion(long questionID, long disciplineID, String questionText, String[] answerTexts, String[] checks){
+    public void updateQuestion(long questionID, String questionText, String[] answerTexts, String[] checks){
         try{
-            Question question = retrieveQuestion(questionID);
             begin();
+            Question question = getSession().load(Question.class, questionID);
             boolean isCorrect;
             int correctAnswer = 0;
             Set<Answer> answerSet = new HashSet<Answer>();

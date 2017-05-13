@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Title Login Page</title>
+    <title>Страница входа</title>
 </head>
 <body>
 <div style="padding-left: 30%;">

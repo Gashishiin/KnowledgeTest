@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title>Users</title>
+    <title>Пользователи</title>
     <script src="${pageContext.request.contextPath}/resources/jquery/jquery-3.2.1.js"></script>
     <script>
         $.ajaxPrefilter(function (options, originalOptions, jqXHR) {

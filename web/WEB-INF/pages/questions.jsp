@@ -3,7 +3,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
 <head>
-    <title>Questions</title>
+    <title>Вопросы и разделы</title>
     <script src="${pageContext.request.contextPath}/resources/jquery/jquery-3.2.1.js"></script>
     <script src="${pageContext.request.contextPath}/resources/jsTree/jstree.js"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/jsTree/themes/default/style.css"/>

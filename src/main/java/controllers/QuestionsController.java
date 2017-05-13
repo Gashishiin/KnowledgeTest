@@ -116,10 +116,9 @@ public class QuestionsController {
         System.out.println("updateq " + request.getParameterMap());
         String questionText = request.getParameter("questiontext");
         long questionID = Long.parseLong(request.getParameter("questionid"));
-        long disciplineID = Long.parseLong(request.getParameter("disciplineid"));
         String[] answerText = request.getParameterValues("answertext[]");
         String[] checks = request.getParameterValues("checkanswer[]");
-        new QuestionDAO().updateQuestion(questionID,disciplineID,questionText,answerText,checks);
+        new QuestionDAO().updateQuestion(questionID,questionText,answerText,checks);
         return "";
     }
 

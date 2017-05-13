@@ -15,9 +15,9 @@ public class TestManagementDAO extends HibernateUtil {
 
     public List<TestManagement> createTestAssignments(long disciplineID, String[] logins, Map<String, String> properties) {
         try {
-            Discipline discipline = new DisciplineDAO().retrieveDiscipline(disciplineID);
             List<Users> usersList = new UsersDAO().retrieveUsersByLogin(logins);
             begin();
+            Discipline discipline = getSession().load(Discipline.class, disciplineID);
             TestManagement testManagement;
             List<TestManagement> testManagementList = new ArrayList<TestManagement>();
             properties.put("Date", new Date().toString());
@@ -38,16 +38,15 @@ public class TestManagementDAO extends HibernateUtil {
 
     public List<TestManagement> retrieveAssignmentsByLogin(String login, Boolean isTestDone) {
         try {
-            Users user = new UsersDAO().retrieveUser(login);
             begin();
             Query query;
             if (isTestDone == null)
-                query = getSession().createQuery("from TestManagement where user = :user and isTestDone is null ");
+                query = getSession().createQuery("from TestManagement where user.login = :login and isTestDone is null ");
             else {
-                query = getSession().createQuery("from TestManagement where user = :user and isTestDone=:isTestDone");
+                query = getSession().createQuery("from TestManagement where user.login = :login and isTestDone=:isTestDone");
                 query.setParameter("isTestDone", isTestDone);
             }
-            query.setParameter("user", user);
+            query.setParameter("login", login);
             List<TestManagement> assignments = query.getResultList();
             commit();
             return assignments;
@@ -76,8 +75,8 @@ public class TestManagementDAO extends HibernateUtil {
 
     public TestManagement updateResults(long assignmentID, double score, Boolean isTestDone) {
         try {
-            TestManagement test = retrieveAssignmentByID(assignmentID);
             begin();
+            TestManagement test = getSession().load(TestManagement.class,assignmentID);
             test.setTestDone(isTestDone);
             test.setResultScore(score);
             test.getProperties().put("Date", new Date().toString());
@@ -110,7 +109,7 @@ public class TestManagementDAO extends HibernateUtil {
     public String deleteAssignment(long assignmentID){
         try{
             begin();
-            TestManagement assignment = retrieveAssignmentByID(assignmentID);
+            TestManagement assignment = getSession().load(TestManagement.class,assignmentID);
             getSession().delete(assignment);
             commit();
             return "Deleted" + assignmentID;

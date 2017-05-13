@@ -3,7 +3,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Тест</title>
     <meta name="csrf-token" content="${_csrf.token}"/>
     <script src="${pageContext.request.contextPath}/resources/jquery/jquery-3.2.1.js"></script>
     <script src="${pageContext.request.contextPath}/resources/jquery/jquery.validate.min.js"></script>
