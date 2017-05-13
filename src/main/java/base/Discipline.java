@@ -26,7 +26,7 @@ public class Discipline {
     public Discipline(String disciplineName, long parentDisciplineID){
         this.disciplineName = disciplineName;
         this.parentDisciplineID = parentDisciplineID;
-    };
+    }
 
     public long getDisciplineID() {
         return disciplineID;

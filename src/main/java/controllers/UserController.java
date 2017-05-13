@@ -91,7 +91,7 @@ public class UserController {
         String currentLoggedUser = request.getUserPrincipal().getName();
         if (userLogins != null) {
             if (Arrays.asList(userLogins).contains(currentLoggedUser))
-                attributes.addFlashAttribute("errormessagelist", Arrays.asList(CAN_NOT_DELETE_YOURSELF));
+                attributes.addFlashAttribute("errormessagelist", Collections.singletonList(CAN_NOT_DELETE_YOURSELF));
             else new UsersDAO().deleteUsers(userLogins);
         }
         return "redirect:users";

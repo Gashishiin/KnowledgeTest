@@ -1,9 +1,7 @@
 package security;
 
 import DAO.UsersDAO;
-import base.UserRole;
 import base.Users;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -15,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service("loginService")
 public class LoginService implements UserDetailsService {
@@ -27,8 +24,7 @@ public class LoginService implements UserDetailsService {
         if (user == null) throw new UsernameNotFoundException(username);
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
         authorities.add(new SimpleGrantedAuthority(user.getUserRole().toString()));
-        UserDetails userDetails = new User(user.getLogin(),user.getPassword(),true,true,true,true,authorities);
-        return userDetails;
+        return new User(user.getLogin(),user.getPassword(),true,true,true,true,authorities);
     }
 
 

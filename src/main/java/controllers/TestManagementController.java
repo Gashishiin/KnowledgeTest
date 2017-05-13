@@ -69,42 +69,38 @@ public class TestManagementController {
             String questionAmountString = assignment.getProperties().get("questionAmount");
             if (questionAmountString != null) {
                 int questionAmount = Integer.parseInt(questionAmountString);
-                if (questionList.size() > questionAmount) ;
+                if (questionList.size() > questionAmount)
                 questionList = questionList.subList(0, questionAmount);
             }
             List<String> questionsHTML = new ArrayList<String>();
             for (Question q :
                     questionList) {
-                String questionBlockHTML = "";
+                StringBuilder questionBlockHTML = new StringBuilder();
                 switch (q.getQuestionType()) {
                     case SINGLE_CHOICE:
-                        questionBlockHTML += "<div name='questions'>" + q.getQuestionText() + "<br/>\n";
+                        questionBlockHTML.append("<div name='questions'>").append(q.getQuestionText()).append("<br/>\n");
                         for (Answer a :
                                 q.getAnswerSet()) {
-                            questionBlockHTML += "<input type='radio' name='" + q.getQuestionID()
-                                    + "' value='" + a.getAnswerID() + "'>"
-                                    + a.getAnswerText() + "<br/>\n";
+                            questionBlockHTML.append("<input type='radio' name='").append(q.getQuestionID()).append("' value='").append(a.getAnswerID()).append("'>").append(a.getAnswerText()).append("<br/>\n");
                         }
                         break;
                     case MULTI_CHOICE:
-                        questionBlockHTML += "<div name='questionm'>" + q.getQuestionText() + "<br/>\n";
+                        questionBlockHTML.append("<div name='questionm'>").append(q.getQuestionText()).append("<br/>\n");
                         for (Answer a :
                                 q.getAnswerSet()) {
-                            questionBlockHTML += "<input type='checkbox' name='" + q.getQuestionID()
-                                    + "' value='" + a.getAnswerID() + "'>"
-                                    + a.getAnswerText() + "<br/>\n";
+                            questionBlockHTML.append("<input type='checkbox' name='").append(q.getQuestionID()).append("' value='").append(a.getAnswerID()).append("'>").append(a.getAnswerText()).append("<br/>\n");
                         }
                         break;
                     case FREE:
-                        questionBlockHTML += "<div name='questionf'>" + q.getQuestionText() + "<br/>\n";
+                        questionBlockHTML.append("<div name='questionf'>").append(q.getQuestionText()).append("<br/>\n");
                         for (Answer a :
                                 q.getAnswerSet()) {
-                            questionBlockHTML += "<input type='text' name='" + q.getQuestionID() + "'><br/>\n";
+                            questionBlockHTML.append("<input type='text' name='").append(q.getQuestionID()).append("'><br/>\n");
                         }
                         break;
                 }
-                questionBlockHTML += "<br/></div>\n";
-                questionsHTML.add(questionBlockHTML);
+                questionBlockHTML.append("<br/></div>\n");
+                questionsHTML.add(questionBlockHTML.toString());
             }
             model.addAttribute("assignmentid", test);
             model.addAttribute("questionlist", questionsHTML);
@@ -154,16 +150,16 @@ public class TestManagementController {
     @RequestMapping("getassignments")
     @ResponseBody
     public String getAssignments(WebRequest request, Model model) {
-        String htmlBody = "<table style='padding-left: 10px'>";
+        StringBuilder htmlBody = new StringBuilder("<table style='padding-left: 10px'>");
         long userID = Long.parseLong(request.getParameter("userid"));
         List<TestManagement> assignments = new TestManagementDAO().retrieveAssignmentsByUserID(userID);
         SimpleDateFormat parser = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.ENGLISH);
         Date date;
         String dateFromDB;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-        Boolean isTestDone = null;
-        String repeatOrCancelButton = "";
-        String status = "";
+        Boolean isTestDone;
+        String repeatOrCancelButton;
+        String status;
         String success;
         double threshold;
         String thresholdString;
@@ -201,16 +197,11 @@ public class TestManagementController {
                 else success = "Неуспешно";
             }
 
-            htmlBody += "<tr><td>" + assignment.getDiscipline().getDisciplineName() + "</td>\n<td>"
-                    + assignment.getResultScore() + "</td>\n<td>"
-                    + status + "</td>\n<td>"
-                    + dateFromDB + "</td>\n<td>"
-                    + success + "</td>\n<td>"
-                    + repeatOrCancelButton + "</td>"
+            htmlBody.append("<tr><td>").append(assignment.getDiscipline().getDisciplineName()).append("</td>\n<td>").append(assignment.getResultScore()).append("</td>\n<td>").append(status).append("</td>\n<td>").append(dateFromDB).append("</td>\n<td>").append(success).append("</td>\n<td>").append(repeatOrCancelButton).append("</td>")
             ;
         }
-        htmlBody += "</tr>";
-        return htmlBody;
+        htmlBody.append("</tr>");
+        return htmlBody.toString();
     }
 
     @RequestMapping("deleteassignment")

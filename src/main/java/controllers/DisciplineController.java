@@ -2,7 +2,6 @@ package controllers;
 
 import DAO.DisciplineDAO;
 import base.Discipline;
-import org.hibernate.HibernateException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -40,17 +38,14 @@ public class DisciplineController {
     @ResponseBody
     public String getDisciplines(){
         List<Discipline> disciplineList = new DisciplineDAO().retrieveDisciplines();
-        String disciplineTreeBody = "";
-        disciplineTreeBody+="[{\"id\": \"0\", \"parent\": \"#\", \"text\": \"Top\", \"state\": {\"selected\": \"true\"}},";
+        StringBuilder disciplineTreeBody = new StringBuilder();
+        disciplineTreeBody.append("[{\"id\": \"0\", \"parent\": \"#\", \"text\": \"Top\", \"state\": {\"selected\": \"true\"}},");
         for (Discipline d :
                 disciplineList) {
-            disciplineTreeBody+="{\"id\":\""+d.getDisciplineID()
-                    +"\",\"parent\":\""+d.getParentDisciplineID()
-                    +"\",\"text\":\""+d.getDisciplineName()
-                    +"\"},";
+            disciplineTreeBody.append("{\"id\":\"").append(d.getDisciplineID()).append("\",\"parent\":\"").append(d.getParentDisciplineID()).append("\",\"text\":\"").append(d.getDisciplineName()).append("\"},");
         }
-        disciplineTreeBody=disciplineTreeBody.substring(0,disciplineTreeBody.length()-1)+"]";
-        return disciplineTreeBody;
+        disciplineTreeBody = new StringBuilder(disciplineTreeBody.substring(0, disciplineTreeBody.length() - 1) + "]");
+        return disciplineTreeBody.toString();
     }
 
     @RequestMapping(value = "/deletediscipline")

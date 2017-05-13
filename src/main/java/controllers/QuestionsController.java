@@ -3,7 +3,6 @@ package controllers;
 import DAO.QuestionDAO;
 import base.Answer;
 import base.Question;
-import org.apache.taglibs.standard.lang.jstl.test.PageContextImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -88,26 +87,21 @@ public class QuestionsController {
     public String getQuestion(WebRequest request, Model model){
         long questionID = Long.parseLong(request.getParameter("questionid"));
         Question question = new QuestionDAO().retrieveQuestion(questionID);
-        String htmlBody="Введите вопрос:<br/>"+
-                "<textarea name='questiontext' rows='3' cols='60'>"+ question.getQuestionText() + "</textarea><br/>"+
-                "<button type='button' onclick='addAnswer()'>Добавить поле для ответа</button>"+
-                "<button style='margin-left: 10px' type='button' onclick='updateQuestion()'>Обновить вопрос</button>"+
-                "<button style='margin-left: 10px' type='button' onclick='initQuestionFormCreation()'>Отмена</button>";
+        StringBuilder htmlBody= new StringBuilder("Введите вопрос:<br/>" +
+                "<textarea name='questiontext' rows='3' cols='60'>" + question.getQuestionText() + "</textarea><br/>" +
+                "<button type='button' onclick='addAnswer()'>Добавить поле для ответа</button>" +
+                "<button style='margin-left: 10px' type='button' onclick='updateQuestion()'>Обновить вопрос</button>" +
+                "<button style='margin-left: 10px' type='button' onclick='initQuestionFormCreation()'>Отмена</button>");
         Set<Answer> answerList = question.getAnswerSet();
         int answerFieldNum = 1;
         for (Answer a :
                 answerList) {
-            htmlBody+= "<div id='answerfield'" + answerFieldNum + "'>" +
-                    "Вариант ответа <input type='text' name='answertext[]' value='" + a.getAnswerText()+ "'>" +
-                    "<input type='checkbox' name='checkanswer[]' " + (a.isCorrect() ? "checked" : "") + ">" +
-
-                    (answerFieldNum > 1 ? "<a href='#' onclick='deleteAnswer(this)'>Удалить поле</a>": "") +
-                    "</div>";
+            htmlBody.append("<div id='answerfield'").append(answerFieldNum).append("'>").append("Вариант ответа <input type='text' name='answertext[]' value='").append(a.getAnswerText()).append("'>").append("<input type='checkbox' name='checkanswer[]' ").append(a.isCorrect() ? "checked" : "").append(">").append(answerFieldNum > 1 ? "<a href='#' onclick='deleteAnswer(this)'>Удалить поле</a>" : "").append("</div>");
             answerFieldNum++;
         }
-        htmlBody+="<input type='hidden' name='questionid' value='" + questionID + "'>";
+        htmlBody.append("<input type='hidden' name='questionid' value='").append(questionID).append("'>");
 
-        return htmlBody;
+        return htmlBody.toString();
     }
 
     @RequestMapping("updatequestion")

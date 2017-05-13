@@ -7,7 +7,7 @@ import java.util.Map;
 @Entity
 public class TestManagement {
 
-    public TestManagement(){};
+    public TestManagement(){}
 
     public TestManagement(Users user, Discipline discipline, Map<String, String> properties) {
         this.user = user;

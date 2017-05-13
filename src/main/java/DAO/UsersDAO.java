@@ -100,12 +100,12 @@ public class UsersDAO extends HibernateUtil {
         }
 
         try {
-            String deletedUsers = "";
+            StringBuilder deletedUsers = new StringBuilder();
             begin();
             for (Users user :
                     usersList) {
                 getSession().delete(user);
-                deletedUsers += user.getLogin() + "; ";
+                deletedUsers.append(user.getLogin()).append("; ");
             }
             commit();
             return deletedUsers.toString();
