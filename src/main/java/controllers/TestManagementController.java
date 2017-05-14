@@ -24,6 +24,11 @@ public class TestManagementController {
     @RequestMapping("testmanagement")
     public String testManagement(WebRequest request, Model model) {
         List<Users> usersList = new UsersDAO().retrieveAllUsers();
+        Collections.sort(usersList, new Comparator<Users>() {
+            public int compare(Users o1, Users o2) {
+                return o1.getFullname().compareTo(o2.getFullname());
+            }
+        });
         model.addAttribute("userlist", usersList);
         return "testmanagement";
     }
@@ -149,7 +154,11 @@ public class TestManagementController {
     @RequestMapping("getassignments")
     @ResponseBody
     public String getAssignments(WebRequest request, Model model) {
-        StringBuilder htmlBody = new StringBuilder("<table style='padding-left: 10px'>");
+        StringBuilder htmlBody = new StringBuilder("<table style='padding-left: 5px; border-collapse: collapse' border='1' ");
+        htmlBody.append("<tr><td>Раздел</td><td>Балл</td><td>Статус</td>")
+                .append("<td>Дата назначения (завершения) теста</td>")
+                .append("<td>Кол-во вопросов/порог</td>")
+                .append("<td>Итог</td></tr>");
         long userID = Long.parseLong(request.getParameter("userid"));
         List<TestManagement> assignments = new TestManagementDAO().retrieveAssignmentsByUserID(userID);
         SimpleDateFormat parser = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.ENGLISH);
@@ -162,7 +171,6 @@ public class TestManagementController {
         String success;
         double threshold;
         String thresholdString;
-        System.out.println("assignments " + assignments);
         for (TestManagement assignment :
                 assignments) {
             success = "";
@@ -196,8 +204,17 @@ public class TestManagementController {
                 if (assignment.getResultScore() >= threshold) success = "Успешно";
                 else success = "Неуспешно";
             }
+            String params = assignment.getProperties().get("questionAmount") + "/"
+                    + assignment.getProperties().get("threshold");
 
-            htmlBody.append("<tr><td>").append(assignment.getDiscipline().getDisciplineName()).append("</td>\n<td>").append(assignment.getResultScore()).append("</td>\n<td>").append(status).append("</td>\n<td>").append(dateFromDB).append("</td>\n<td>").append(success).append("</td>\n<td>").append(repeatOrCancelButton).append("</td>")
+            htmlBody.append("<tr><td>")
+                    .append(assignment.getDiscipline().getDisciplineName()).append("</td>\n<td>")
+                    .append(assignment.getResultScore()).append("</td>\n<td>")
+                    .append(status).append("</td>\n<td>")
+                    .append(dateFromDB).append("</td>\n<td>")
+                    .append(params).append("</td>\n<td>")
+                    .append(success).append("</td>\n<td>")
+                    .append(repeatOrCancelButton).append("</td>")
             ;
         }
         htmlBody.append("</tr>");
@@ -212,7 +229,6 @@ public class TestManagementController {
         if (assignmentIDString != null) {
             assignmentID = Long.parseLong(assignmentIDString);
             TestManagement assignment = new TestManagementDAO().retrieveAssignmentByID(assignmentID);
-            System.out.println("Assignment isTestDone " + assignment.isTestDone());
             if (assignment.isTestDone() != null)
                 new TestManagementDAO().deleteAssignment(assignmentID);
         }

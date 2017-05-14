@@ -107,7 +107,6 @@ public class QuestionsController {
     @RequestMapping("updatequestion")
     @ResponseBody
     public String updateQuestion(WebRequest request, Model model){
-        System.out.println("updateq " + request.getParameterMap());
         String questionText = request.getParameter("questiontext");
         long questionID = Long.parseLong(request.getParameter("questionid"));
         String[] answerText = request.getParameterValues("answertext[]");

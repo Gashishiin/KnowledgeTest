@@ -56,11 +56,18 @@
 </div>
 <div id="existingusers" style="margin-left: 200px">
     <form action="deleteusers" method="POST">
-        <table>
+        <table border="1" style="border-collapse: collapse;">
+            <tr>
+                <td></td>
+                <td>Полное имя</td>
+                <td>Логин</td>
+                <td>Роль</td>
+            </tr>
             <c:forEach items="${userlist}" var="users">
                 <tr>
-                    <td><button type="button" onclick="edituser(${users.userID})">Редактировать</button></td>
-                    <td><input type="checkbox" name="login" value=${users.login}>${users.fullname}</td>
+                    <td><button type="button" onclick="edituser(${users.userID})">Редактировать</button>
+                        <input type="checkbox" name="login" value=${users.login}></td>
+                    <td>${users.fullname}</td>
                     <td> ${users.login}</td>
                     <td>
                         <c:if test="${users.userRole eq 'ROLE_ADMIN'}">Администратор</c:if>

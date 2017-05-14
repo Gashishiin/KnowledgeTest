@@ -33,6 +33,11 @@ public class UserController {
     @RequestMapping("users")
     public String getUsers(WebRequest request, Model model) {
         List<Users> usersList = new UsersDAO().retrieveAllUsers();
+        Collections.sort(usersList, new Comparator<Users>() {
+            public int compare(Users o1, Users o2) {
+                return o1.getFullname().compareTo(o2.getFullname());
+            }
+        });
         model.addAttribute("userlist", usersList);
         return "users";
     }

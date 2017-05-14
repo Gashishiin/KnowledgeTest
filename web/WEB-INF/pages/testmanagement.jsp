@@ -100,11 +100,18 @@
         <p><button type="button" onclick="assigntest()">Назначить тест</button>
             Количество вопросов <input type="number" min="1" max="100" value="20" size="2" name="questionamount">
             Порог <input type="number" min="0.01" max="100" value="80" step="0.01" size="2" name="threshold"></p>
-        <table>
+        <table border="1" style="border-collapse: collapse;">
+            <tr>
+                <td></td>
+                <td>Полное имя пользователя</td>
+                <td>Логин</td>
+                <td>Роль</td>
+            </tr>
         <c:forEach items="${userlist}" var="users">
             <tr>
-                <td><button type="button" onclick="showassignments(${users.userID})">Назначенные тесты</button></td>
-                <td><input type="checkbox" name="login" value=${users.login}>${users.fullname}</td>
+                <td><button type="button" onclick="showassignments(${users.userID})">Назначенные тесты</button>
+                    <input type="checkbox" name="login" value=${users.login}></td>
+                <td>${users.fullname}</td>
                 <td> ${users.login}</td>
                 <td>
                     <c:if test="${users.userRole eq 'ROLE_ADMIN'}">Администратор</c:if>
