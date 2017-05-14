@@ -86,7 +86,6 @@
             </form>
         </c:when>
         <c:otherwise>
-            Назначенных тестов нет
         </c:otherwise>
     </c:choose>
 </div>
@@ -95,6 +94,12 @@
         <c:when test="${donetestlist != null && !empty donetestlist}">
             Пройденные тесты
             <table>
+                <tr>
+                    <td>Раздел</td>
+                    <td>Балл</td>
+                    <td>Итог</td>
+                    <td>Дата завершения</td>
+                </tr>
                 <c:forEach items="${donetestlist}" var="donetest">
                     <tr>
                         <td>${donetest.discipline.disciplineName}</td>
@@ -114,7 +119,6 @@
             </table>
         </c:when>
         <c:otherwise>
-            Пройденных тестов нет
         </c:otherwise>
     </c:choose>
 </div>
