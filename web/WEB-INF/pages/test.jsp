@@ -119,6 +119,7 @@
             </table>
         </c:when>
         <c:otherwise>
+            Назначенных тестов нет
         </c:otherwise>
     </c:choose>
 </div>
