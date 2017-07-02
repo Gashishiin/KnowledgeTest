@@ -24,7 +24,7 @@
                 url: "submitresults",
                 data: data,
                 success: function () {
-                    window.location.href = "/test";
+                    window.location.href = "${pageContext.request.contextPath}/test";
                 }
             })
         }
