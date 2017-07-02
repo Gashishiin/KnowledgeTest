@@ -42,12 +42,12 @@ function renderQuestions() {
 }
 
 function createDiscipline(discipline) {
-    var disciplineName = prompt("Enter discipline name");
+    var disciplineName = prompt("Введите имя раздела");
     if (disciplineName != null && disciplineName != "") {
         $.post("creatediscipline",
             {
                 disciplineName: disciplineName,
-                parentDisciplineID: discipline
+                parentDisciplineID: DTree.id
             },
             function () {
                 $.get('/questions');
